@@ -65,7 +65,7 @@ const TableBody = (props: TableBodyProps) => {
                   <TableRow key={key}>
                     <TableCell>{item.companyName}</TableCell>
                     <TableCell>{item.hqAdress}</TableCell>
-                    <TableCell>{item.isActive}</TableCell>
+                    <TableCell>{item.isActive ? 'YES' : 'NO'}</TableCell>
                   </TableRow>
                 );
               }
