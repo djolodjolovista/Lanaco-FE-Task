@@ -8,11 +8,23 @@ import { ReactComponent as Sellers } from '../icons/seller.svg';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-ignore
 import { ReactComponent as Customers } from '../icons/customers.svg';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+//@ts-ignore
+import { ReactComponent as Add } from '../icons/add.svg';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+//@ts-ignore
+import { ReactComponent as Edit } from '../icons/edit.svg';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+//@ts-ignore
+import { ReactComponent as Delete } from '../icons/delete.svg';
 
 const ICON_LIST = {
   invoices: Invoices,
   sellers: Sellers,
-  customers: Customers
+  customers: Customers,
+  add: Add,
+  delete: Delete,
+  edit: Edit
 };
 
 export type IconKeys = keyof typeof ICON_LIST;

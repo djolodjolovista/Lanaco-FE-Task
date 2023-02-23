@@ -21,12 +21,17 @@ const Menu = () => {
 export default Menu;
 
 const MainContainer = styled.div`
+  position: absolute;
+  z-index: 1000;
+  top: 150px;
+  left: 30px;
   display: flex;
   flex-direction: column;
   align-items: center;
   border: 2px solid black;
   width: 78px;
   border-radius: 16px;
+  box-shadow: 3px 3px 7px rgb(0 0 0 / 60%);
 `;
 
 const IconConatiner = styled.div`

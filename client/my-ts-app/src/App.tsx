@@ -6,11 +6,15 @@ import LandingScreen from './screens/LandingScreen';
 import Invoices from './screens/Invoices';
 import Sellers from './screens/Sellers';
 import Customers from './screens/Customers';
+import Menu from './components/menus/Menu';
+import OptionsMenu from './components/menus/OptionsMenu';
 
 function App() {
   return (
     <div className="App">
       <BrowserRouter>
+        <Menu />
+        <OptionsMenu />
         <Routes>
           <Route path="*" element={<Navigate to="/landing-screen" />} />
           <Route path="/landing-screen" element={<LandingScreen />} />
