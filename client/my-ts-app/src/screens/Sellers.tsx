@@ -1,28 +1,29 @@
+import { observer } from 'mobx-react';
 import React from 'react';
 import styled from 'styled-components';
 import PageHeader from '../components/PageHeader';
 import TableBody from '../components/table/TableBody';
 import TableHeader from '../components/table/TableHeader';
+import sellersStore from '../stores/sellers';
+import parentStore from '../stores/parent';
+import { Page } from '../stores/parent';
 
 const Sellers = () => {
   const header = ['Name', 'Adress', 'Active'];
+  parentStore.changeActivePage(Page.sellers);
 
-  const test = [
-    { companyName: 'Microsoft', hqAdress: 'Sarajevo', isActive: true },
-    { companyName: 'Intel', hqAdress: 'London', isActive: false }
-  ];
   return (
     <MainContainer>
       <Container>
         <PageHeader text="SELLERS" />
         <TableHeader cellsContent={header} />
-        <TableBody type="SELLERS" elements={test} />
+        <TableBody type="SELLERS" elements={sellersStore.sellers} />
       </Container>
     </MainContainer>
   );
 };
 
-export default Sellers;
+export default observer(Sellers);
 
 const MainContainer = styled.div`
   position: relative;

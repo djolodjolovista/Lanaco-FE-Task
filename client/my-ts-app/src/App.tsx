@@ -8,8 +8,15 @@ import Sellers from './screens/Sellers';
 import Customers from './screens/Customers';
 import Menu from './components/menus/Menu';
 import OptionsMenu from './components/menus/OptionsMenu';
+import Modal from './components/modals/Modal';
 
 function App() {
+  const modalOptions = [
+    { text: 'Seller' },
+    { text: 'Customer' },
+    { text: 'Date' },
+    { text: 'Amount' }
+  ];
   return (
     <div className="App">
       <BrowserRouter>
@@ -19,7 +26,9 @@ function App() {
           <Route path="*" element={<Navigate to="/landing-screen" />} />
           <Route path="/landing-screen" element={<LandingScreen />} />
           <Route path="/home" element={<MainScreen />} />
-          <Route path="/invoices" element={<Invoices />} />
+          <Route path="/invoices" element={<Invoices />}>
+            <Route path=":id" element={<Modal type="test" options={modalOptions} />} />
+          </Route>
           <Route path="/sellers" element={<Sellers />} />
           <Route path="/customers" element={<Customers />} />
         </Routes>

@@ -1,5 +1,8 @@
+import moment from 'moment';
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import invoicesStore from '../../stores/invoices';
 
 interface TableBodyProps {
   elements: any[];
@@ -9,20 +12,20 @@ interface TableBodyProps {
 interface TableBodyInvoices {
   sellerName: string;
   customerName: string;
-  date: string;
+  date: Date;
   amount: string;
   id: string;
   sellerId: string;
   customerId: string;
 }
 
-interface TableBodyCustomers {
+interface TableBodySellers {
   companyName: string;
   hqAdress: string;
   isActive: boolean;
 }
 
-interface TableBodySellers {
+interface TableBodyCustomers {
   name: string;
   surname: string;
   adress: string;
@@ -30,6 +33,7 @@ interface TableBodySellers {
 }
 
 const TableBody = (props: TableBodyProps) => {
+  const navigate = useNavigate();
   if (props.type === 'INVOICES' && (props.elements as unknown as TableBodyInvoices)) {
     return (
       <TableContainer>
@@ -37,14 +41,25 @@ const TableBody = (props: TableBodyProps) => {
           <tbody>
             {props.elements.map(
               (
-                item: { sellerName: string; customerName: string; date: string; amount: string },
+                item: {
+                  id: string;
+                  sellerName: string;
+                  customerName: string;
+                  date: Date;
+                  amount: string;
+                },
                 key
               ) => {
                 return (
-                  <TableRow key={key}>
+                  <TableRow
+                    key={key}
+                    onClick={() => {
+                      navigate(`/invoices/${item.id}`);
+                      invoicesStore.getInvoice(item.id);
+                    }}>
                     <TableCell>{item.sellerName}</TableCell>
                     <TableCell>{item.customerName}</TableCell>
-                    <TableCell>{item.date}</TableCell>
+                    <TableCell>{moment(item.date).format('MM/DD/YYYY')}</TableCell>
                     <TableCell>{item.amount}</TableCell>
                   </TableRow>
                 );

@@ -4,8 +4,9 @@ import styled from 'styled-components';
 interface ButtonProps {
   color: string;
   text: string;
-  onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  onClick: () => void;
 }
+//onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
 
 const Button = (props: ButtonProps) => {
   return (

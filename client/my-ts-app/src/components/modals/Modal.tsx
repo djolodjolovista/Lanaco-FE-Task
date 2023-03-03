@@ -1,25 +1,34 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import Icon from '../../icons/Icon';
 import Button from '../Button';
+import invoicesStore from '../../stores/invoices';
 
 interface ModalProps {
-  title: string;
+  type: string;
   //options: { text: string; onClick: (e: React.ChangeEvent) => void }[];
   options: { text: string }[];
 }
 
 const Modal = (props: ModalProps) => {
+  const [data, setData] = useState({});
+  const { id } = useParams();
+  console.log('ID->>>>', id);
+  if (props.type === 'INVOICE') {
+    setData(invoicesStore.invoice);
+  }
   const saveForm = () => {
     null;
   };
   const deleteForm = () => {
     null;
   };
+
   return (
     <Container>
       <HeaderContainer>
-        <Header>{props.title}</Header>
+        <Header>Edit an {props.type}</Header>
         <IconConatiner>
           <Icon icon="delete" />
         </IconConatiner>
@@ -49,11 +58,17 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   position: absolute;
-  top: 10px;
-  left: 115px;
+  bottom: 0;
+  left: 0;
+  margin: auto;
+  right: 0;
+  top: 0;
+  z-index: 1000;
   border: 2px solid black;
   width: 25%;
   border-radius: 30px;
+  height: 355px;
+  background: white;
 `;
 
 const HeaderContainer = styled.div`
