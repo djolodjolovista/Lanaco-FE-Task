@@ -1,24 +1,83 @@
-import React from 'react';
+import { observer } from 'mobx-react';
+import React, { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import { api } from '../../api/ApiRequests';
 import Icon from '../../icons/Icon';
+import invoicesStore from '../../stores/invoices';
+import parentStore from '../../stores/parent';
+import { Page } from '../../stores/parent';
+import DeleteModal from '../modals/DeleteModal';
 
 const OptionsMenu = () => {
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+  const createRow = () => {
+    if (parentStore.activePage === Page.invoices) {
+      invoicesStore.toggleModal();
+    } else if (parentStore.activePage === Page.sellers) {
+      /* empty */
+    } else if (parentStore.activePage === Page.customers) {
+      /* empty */
+    }
+  };
+
+  const deleteRow = async () => {
+    if (parentStore.activePage === Page.invoices) {
+      api.deleteInvoice(parentStore.selectedRow);
+      await delay(600);
+      parentStore.addSelectedRow('');
+      invoicesStore.fetchInvoices();
+      setShowDeleteModal(false);
+    } else if (parentStore.activePage === Page.sellers) {
+      /* empty */
+    } else if (parentStore.activePage === Page.customers) {
+      /* empty */
+    }
+  };
+
+  const editRow = () => {
+    if (parentStore.activePage === Page.invoices) {
+      navigate(`${location.pathname}/${parentStore.selectedRow}`);
+    } else if (parentStore.activePage === Page.sellers) {
+      /* empty */
+    } else if (parentStore.activePage === Page.customers) {
+      /* empty */
+    }
+  };
+
+  console.log('Location->>>>>', location.pathname);
   return (
-    <MainContainer>
-      <IconConatiner background="#00800070">
-        <Icon icon="add" size="35" />
-      </IconConatiner>
-      <IconConatiner background="#ffff0075">
-        <Icon icon="edit" size="25" />
-      </IconConatiner>
-      <IconConatiner background="#ff000073">
-        <Icon icon="delete" size="35" />
-      </IconConatiner>
-    </MainContainer>
+    <>
+      <MainContainer>
+        <IconConatiner enabled={true} onClick={createRow} background="#00800070">
+          <Icon icon="add" size="35" />
+        </IconConatiner>
+        <IconConatiner
+          enabled={parentStore.enabledMenuOptions}
+          onClick={editRow}
+          background="#ffff0075">
+          <Icon icon="edit" size="25" />
+        </IconConatiner>
+        <IconConatiner
+          enabled={parentStore.enabledMenuOptions}
+          onClick={() => setShowDeleteModal(true)}
+          background="#ff000073">
+          <Icon icon="delete" size="35" />
+        </IconConatiner>
+      </MainContainer>
+      {showDeleteModal && (
+        <DeleteModal label="Are you sure ?" yes={deleteRow} no={() => setShowDeleteModal(false)} />
+      )}
+    </>
   );
 };
 
-export default OptionsMenu;
+export default observer(OptionsMenu);
 
 const MainContainer = styled.div`
   display: flex;
@@ -34,7 +93,11 @@ const MainContainer = styled.div`
   box-shadow: 3px 3px 7px rgb(0 0 0 / 60%);
 `;
 
-const IconConatiner = styled.div<{ background: string }>`
+const IconConatiner = styled.div<{ background: string; enabled?: boolean }>`
+  ${(props) =>
+    !props.enabled
+      ? `pointer-events: none; background: #e6e6e6;`
+      : `background:${props.background};`}
   display: flex;
   margin-right: 10px;
   margin-left: 10px;
@@ -44,7 +107,6 @@ const IconConatiner = styled.div<{ background: string }>`
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background: ${(props) => props.background};
   &:hover {
     background: #e6e6e6;
     color: blue;

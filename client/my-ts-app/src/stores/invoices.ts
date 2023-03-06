@@ -15,6 +15,7 @@ export interface Invoice {
 class Invoices {
   invoices = [];
   invoice: Invoice | null;
+  showModal = false;
 
   constructor() {
     makeAutoObservable(this);
@@ -41,6 +42,10 @@ class Invoices {
 
   get selectedInvoice() {
     return this.invoice;
+  }
+
+  toggleModal() {
+    this.showModal = !this.showModal;
   }
 }
 const invoicesStore = new Invoices();

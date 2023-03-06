@@ -17,7 +17,7 @@ const Sellers = () => {
       <Container>
         <PageHeader text="SELLERS" />
         <TableHeader cellsContent={header} />
-        <TableBody type="SELLERS" elements={sellersStore.sellers} />
+        <TableBody row="test" type="SELLERS" elements={sellersStore.sellers} />
       </Container>
     </MainContainer>
   );

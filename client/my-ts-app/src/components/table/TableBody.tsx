@@ -1,12 +1,15 @@
+import { observer } from 'mobx-react';
 import moment from 'moment';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import invoicesStore from '../../stores/invoices';
+import parentStore from '../../stores/parent';
 
 interface TableBodyProps {
   elements: any[];
   type: string;
+  row: string;
 }
 
 interface TableBodyInvoices {
@@ -52,9 +55,12 @@ const TableBody = (props: TableBodyProps) => {
               ) => {
                 return (
                   <TableRow
+                    selected={props.row === item.id}
+                    id={item.id}
                     key={key}
                     onClick={() => {
-                      navigate(`/invoices/${item.id}`);
+                      //navigate(`/invoices/${item.id}`);
+                      parentStore.addSelectedRow(item.id);
                     }}>
                     <TableCell>{item.sellerName}</TableCell>
                     <TableCell>{item.customerName}</TableCell>
@@ -76,7 +82,7 @@ const TableBody = (props: TableBodyProps) => {
             {props.elements.map(
               (item: { companyName: string; hqAdress: string; isActive: boolean }, key) => {
                 return (
-                  <TableRow key={key}>
+                  <TableRow selected={false} key={key}>
                     <TableCell>{item.companyName}</TableCell>
                     <TableCell>{item.hqAdress}</TableCell>
                     <TableCell>{item.isActive ? 'YES' : 'NO'}</TableCell>
@@ -96,7 +102,7 @@ const TableBody = (props: TableBodyProps) => {
             {props.elements.map(
               (item: { name: string; surname: string; adress: string; age: number }, key) => {
                 return (
-                  <TableRow key={key}>
+                  <TableRow selected={false} key={key}>
                     <TableCell>{item.name}</TableCell>
                     <TableCell>{item.surname}</TableCell>
                     <TableCell>{item.adress}</TableCell>
@@ -114,7 +120,7 @@ const TableBody = (props: TableBodyProps) => {
   }
 };
 
-export default TableBody;
+export default observer(TableBody);
 
 const TableContainer = styled.div`
   margin-top: 10px;
@@ -142,7 +148,8 @@ const TableCell = styled.td`
   }
 `;
 
-const TableRow = styled.tr`
+const TableRow = styled.tr<{ selected: boolean }>`
+  ${(props) => props.selected && `background: #8080801a;`}
   &:hover {
     background: #8080801a;
     cursor: pointer;

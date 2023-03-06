@@ -10,6 +10,7 @@ import { observer } from 'mobx-react';
 import parentStore from '../stores/parent';
 import { Page } from '../stores/parent';
 import { useSearchParams, Outlet } from 'react-router-dom';
+import Modal from '../components/modals/Modal';
 
 const Invoices = () => {
   const header = ['Seller', 'Customer', 'Date', 'Amount'];
@@ -25,9 +26,14 @@ const Invoices = () => {
         <Container>
           <PageHeader text="INVOICES" />
           <TableHeader cellsContent={header} />
-          <TableBody type="INVOICES" elements={invoicesStore.invoices} />
+          <TableBody
+            row={parentStore.selectedRow}
+            type="INVOICES"
+            elements={invoicesStore.invoices}
+          />
         </Container>
       </MainContainer>
+      {invoicesStore.showModal && <Modal type="Invoices" />}
       <Outlet />
     </>
   );

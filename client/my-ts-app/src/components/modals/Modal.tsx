@@ -9,11 +9,12 @@ import { observer } from 'mobx-react';
 import moment from 'moment';
 import { api } from '../../api/ApiRequests';
 import { Invoice } from '../../stores/invoices';
+import parentStore from '../../stores/parent';
 
 interface ModalProps {
   type: string;
   //options: { text: string; onClick: (e: React.ChangeEvent) => void }[];
-  options: { text: string }[];
+  options?: { text: string }[];
 }
 
 const Modal = (props: ModalProps) => {
@@ -33,11 +34,18 @@ const Modal = (props: ModalProps) => {
       sellerId: '',
       customerId: ''
     };
-    data = id && (await api.getInvoice(id)).data;
-    setSeller(data.sellerName);
-    setCustomer(data.customerName);
-    setDate(data.date);
-    setAmount(data.amount);
+    if (id) {
+      data = (await api.getInvoice(id)).data;
+      setSeller(data.sellerName);
+      setCustomer(data.customerName);
+      setDate(data.date);
+      setAmount(data.amount);
+    } else {
+      setSeller('');
+      setCustomer('');
+      setDate(() => new Date());
+      setAmount(0);
+    }
   };
   useEffect(() => {
     //id && invoicesStore.getInvoice(id);
@@ -55,13 +63,26 @@ const Modal = (props: ModalProps) => {
       date: date,
       amount: amount
     };
-    id && api.updateInvoice(id, body);
-    await delay(600); //update 'put' method need more time for execution, after that we refresh data
-    invoicesStore.fetchInvoices();
-    navigate('/invoices');
+    if (id) {
+      api.updateInvoice(id, body);
+      await delay(600); //update 'put' method need more time for execution, after that we refresh data
+      invoicesStore.fetchInvoices();
+      parentStore.addSelectedRow('');
+      navigate('/invoices');
+    } else {
+      api.createInvoice(body);
+      await delay(400); //create 'post' method need more time for execution, after that we refresh data
+      invoicesStore.fetchInvoices();
+      parentStore.addSelectedRow('');
+      invoicesStore.toggleModal();
+    }
   };
-  const deleteForm = () => {
-    null;
+  const discardForm = () => {
+    if (id) {
+      navigate('/invoices');
+    } else {
+      invoicesStore.toggleModal();
+    }
   };
 
   const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -71,7 +92,7 @@ const Modal = (props: ModalProps) => {
       <Container>
         <HeaderContainer>
           <Header>Edit an {props.type}</Header>
-          <IconConatiner onClick={() => navigate('/invoices')}>
+          <IconConatiner onClick={discardForm}>
             <Icon icon="delete" />
           </IconConatiner>
         </HeaderContainer>
@@ -108,7 +129,7 @@ const Modal = (props: ModalProps) => {
           </OptionsContainer>
         </OptionsContainer>
         <ButtonsContainer>
-          <ModalButton text="Discard" color="188, 193, 22" onClick={deleteForm} />
+          <ModalButton text="Discard" color="188, 193, 22" onClick={discardForm} />
           <ModalButton text="Save" color="103, 178, 71" onClick={saveForm} />
         </ButtonsContainer>
       </Container>

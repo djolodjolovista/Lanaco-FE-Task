@@ -10,25 +10,42 @@ interface DeleteModalProps {
 
 const DeleteModal = (props: DeleteModalProps) => {
   return (
-    <Container>
-      <Label>{props.label}</Label>
-      <ButtonContainer>
-        <Button color="255, 77, 77" text="Yes" onClick={props.yes} />
-        <Button color="179, 179, 179" text="No" onClick={props.no} />
-      </ButtonContainer>
-    </Container>
+    <MainContainer>
+      <Container>
+        <Label>{props.label}</Label>
+        <ButtonContainer>
+          <Button color="255, 77, 77" text="Yes" onClick={props.yes} />
+          <Button color="179, 179, 179" text="No" onClick={props.no} />
+        </ButtonContainer>
+      </Container>
+    </MainContainer>
   );
 };
 
 export default DeleteModal;
+
+const MainContainer = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+`;
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   position: absolute;
-  top: 10px;
-  left: 115px;
+  height: 110px;
+  bottom: 0;
+  left: 0;
+  margin: auto;
+  right: 0;
+  top: 0;
+  z-index: 1001;
+  background: white;
   border: 2px solid black;
   width: 250px;
   border-radius: 20px;

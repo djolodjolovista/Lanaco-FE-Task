@@ -12,6 +12,7 @@ export enum Page {
 class Parent {
   activePage: Page = Page.main;
   showModal = false;
+  selectedRow = '';
   constructor() {
     makeAutoObservable(this, {}, { autoBind: true });
   }
@@ -26,8 +27,16 @@ class Parent {
     });
   }
 
+  addSelectedRow(id: string) {
+    this.selectedRow = id;
+  }
+
   toggleModal() {
     this.showModal = !this.showModal;
+  }
+
+  get enabledMenuOptions() {
+    return this.selectedRow !== '';
   }
 }
 
