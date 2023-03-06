@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import Menu from '../components/menus/Menu';
 import OptionsMenu from '../components/menus/OptionsMenu';
@@ -14,8 +14,8 @@ import { useSearchParams, Outlet } from 'react-router-dom';
 const Invoices = () => {
   const header = ['Seller', 'Customer', 'Date', 'Amount'];
   parentStore.changeActivePage(Page.invoices);
-  /*
-  useEffect(() => {
+
+  /*useEffect(() => {
     invoicesStore.fetchInvoices();
   }, []);*/
 

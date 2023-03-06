@@ -23,12 +23,13 @@ export default OptionsMenu;
 const MainContainer = styled.div`
   display: flex;
   flex-direction: row;
-  position: absolute;
-  z-index: 1000;
+  position: fixed;
+  z-index: 1;
   top: 150px;
-  left: 37.5%;
+  left: 50%;
+  margin-left: -106.5px;
   border: 2px solid black;
-  width: 25%;
+  width: 213px;
   border-radius: 16px;
   box-shadow: 3px 3px 7px rgb(0 0 0 / 60%);
 `;

@@ -43,8 +43,8 @@ const Menu = () => {
 export default observer(Menu);
 
 const MainContainer = styled.div`
-  position: absolute;
-  z-index: 1000;
+  position: fixed;
+  z-index: 1;
   top: 150px;
   left: 30px;
   display: flex;

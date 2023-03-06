@@ -17,6 +17,7 @@ export default PageHeader;
 
 const Container = styled.div`
   display: flex;
+  position: fixed;
   flex-direction: row;
   justify-content: center;
   align-items: center;

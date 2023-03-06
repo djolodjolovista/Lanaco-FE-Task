@@ -3,13 +3,23 @@
 import { makeAutoObservable, flow } from 'mobx';
 import { api } from '../api/ApiRequests';
 
+export interface Invoice {
+  sellerName: string;
+  customerName: string;
+  date: Date | undefined;
+  amount: number;
+  sellerId: string;
+  customerId: string;
+}
+
 class Invoices {
   invoices = [];
-  invoice = {};
+  invoice: Invoice | null;
 
   constructor() {
     makeAutoObservable(this);
     this.fetchInvoices();
+    this.invoice = null;
   }
 
   fetchInvoices = flow(function* (this: Invoices) {
@@ -28,6 +38,10 @@ class Invoices {
       console.log(error);
     }
   });
+
+  get selectedInvoice() {
+    return this.invoice;
+  }
 }
 const invoicesStore = new Invoices();
 export default invoicesStore;

@@ -55,7 +55,6 @@ const TableBody = (props: TableBodyProps) => {
                     key={key}
                     onClick={() => {
                       navigate(`/invoices/${item.id}`);
-                      invoicesStore.getInvoice(item.id);
                     }}>
                     <TableCell>{item.sellerName}</TableCell>
                     <TableCell>{item.customerName}</TableCell>

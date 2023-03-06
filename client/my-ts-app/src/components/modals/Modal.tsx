@@ -1,9 +1,14 @@
-import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import Icon from '../../icons/Icon';
 import Button from '../Button';
 import invoicesStore from '../../stores/invoices';
+import InvoiceFormModal from './InvoiceFormModal';
+import { observer } from 'mobx-react';
+import moment from 'moment';
+import { api } from '../../api/ApiRequests';
+import { Invoice } from '../../stores/invoices';
 
 interface ModalProps {
   type: string;
@@ -12,46 +17,116 @@ interface ModalProps {
 }
 
 const Modal = (props: ModalProps) => {
-  const [data, setData] = useState({});
+  const [seller, setSeller] = useState('');
+  const [customer, setCustomer] = useState('');
+  const [date, setDate] = useState<Date>();
+  const [amount, setAmount] = useState(0);
   const { id } = useParams();
+  const navigate = useNavigate();
   console.log('ID->>>>', id);
-  if (props.type === 'INVOICE') {
-    setData(invoicesStore.invoice);
-  }
-  const saveForm = () => {
-    null;
+  const fetchData = async () => {
+    let data: Invoice = {
+      sellerName: '',
+      customerName: '',
+      date: new Date(),
+      amount: 0,
+      sellerId: '',
+      customerId: ''
+    };
+    data = id && (await api.getInvoice(id)).data;
+    setSeller(data.sellerName);
+    setCustomer(data.customerName);
+    setDate(data.date);
+    setAmount(data.amount);
+  };
+  useEffect(() => {
+    //id && invoicesStore.getInvoice(id);
+    fetchData();
+  }, []);
+  console.log('Invoice->>>>', invoicesStore.invoice);
+  console.log('seller->>>>', seller);
+  //if (props.type === 'INVOICE') {
+  //setData(invoicesStore.invoice);
+  // }
+  const saveForm = async () => {
+    const body = {
+      sellerName: seller,
+      customerName: customer,
+      date: date,
+      amount: amount
+    };
+    id && api.updateInvoice(id, body);
+    await delay(600); //update 'put' method need more time for execution, after that we refresh data
+    invoicesStore.fetchInvoices();
+    navigate('/invoices');
   };
   const deleteForm = () => {
     null;
   };
 
+  const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
   return (
-    <Container>
-      <HeaderContainer>
-        <Header>Edit an {props.type}</Header>
-        <IconConatiner>
-          <Icon icon="delete" />
-        </IconConatiner>
-      </HeaderContainer>
-      <OptionsContainer>
-        {props.options.map((item, key) => {
-          return (
-            <Option key={key}>
-              <Label>{item.text}</Label>
-              <Input onChange={(e: React.ChangeEvent<HTMLInputElement>) => null} />
+    <MainContainer>
+      <Container>
+        <HeaderContainer>
+          <Header>Edit an {props.type}</Header>
+          <IconConatiner onClick={() => navigate('/invoices')}>
+            <Icon icon="delete" />
+          </IconConatiner>
+        </HeaderContainer>
+        <OptionsContainer>
+          <OptionsContainer>
+            <Option>
+              <Label>Seller</Label>
+              <Input
+                type="text"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSeller(e.target.value)}
+                value={seller}
+              />
             </Option>
-          );
-        })}
-      </OptionsContainer>
-      <ButtonsContainer>
-        <ModalButton text="Discard" color="188, 193, 22" onClick={saveForm} />
-        <ModalButton text="Create" color="103, 178, 71" onClick={deleteForm} />
-      </ButtonsContainer>
-    </Container>
+            <Option>
+              <Label>Customer</Label>
+              <Input
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCustomer(e.target.value)}
+                value={customer}
+              />
+            </Option>
+            <Option>
+              <Label>Date</Label>
+              <Input
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setDate(new Date(e.target.value))
+                }
+                value={moment(date).format('DD.MM.YYYY')}
+              />
+            </Option>
+            <Option>
+              <Label>Amount</Label>
+              <Input onChange={(e) => setAmount(parseInt(e.target.value))} value={amount} />
+            </Option>
+          </OptionsContainer>
+        </OptionsContainer>
+        <ButtonsContainer>
+          <ModalButton text="Discard" color="188, 193, 22" onClick={deleteForm} />
+          <ModalButton text="Save" color="103, 178, 71" onClick={saveForm} />
+        </ButtonsContainer>
+      </Container>
+    </MainContainer>
   );
 };
 
-export default Modal;
+export default observer(Modal);
+
+//MainContainer is used for backdrop
+const MainContainer = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+`;
 
 const Container = styled.div`
   display: flex;
@@ -65,7 +140,7 @@ const Container = styled.div`
   top: 0;
   z-index: 1000;
   border: 2px solid black;
-  width: 25%;
+  width: 252px;
   border-radius: 30px;
   height: 355px;
   background: white;

@@ -22,7 +22,7 @@ const Container = styled.div`
   flex-direction: row;
   border: 1px solid black;
   border-radius: 5px;
-  margin-top: 150px;
+  margin-top: 250px;
   background: #8080803b;
 `;
 
