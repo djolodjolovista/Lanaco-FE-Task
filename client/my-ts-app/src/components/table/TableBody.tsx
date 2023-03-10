@@ -1,10 +1,11 @@
 import { observer } from 'mobx-react';
 import moment from 'moment';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import invoicesStore from '../../stores/invoices';
 import parentStore from '../../stores/parent';
+import Pagination from '../../components/Pagination';
 
 interface TableBodyProps {
   elements: any[];
@@ -64,7 +65,7 @@ const TableBody = (props: TableBodyProps) => {
                     }}>
                     <TableCell>{item.sellerName}</TableCell>
                     <TableCell>{item.customerName}</TableCell>
-                    <TableCell>{moment(item.date).format('MM/DD/YYYY')}</TableCell>
+                    <TableCell>{moment(item.date).format('DD.MM.YYYY')}</TableCell>
                     <TableCell>{item.amount}</TableCell>
                   </TableRow>
                 );
@@ -80,9 +81,16 @@ const TableBody = (props: TableBodyProps) => {
         <Table>
           <tbody>
             {props.elements.map(
-              (item: { companyName: string; hqAdress: string; isActive: boolean }, key) => {
+              (
+                item: { id: string; companyName: string; hqAdress: string; isActive: boolean },
+                key
+              ) => {
                 return (
-                  <TableRow selected={false} key={key}>
+                  <TableRow
+                    selected={props.row === item.id}
+                    id={item.id}
+                    onClick={() => parentStore.addSelectedRow(item.id)}
+                    key={key}>
                     <TableCell>{item.companyName}</TableCell>
                     <TableCell>{item.hqAdress}</TableCell>
                     <TableCell>{item.isActive ? 'YES' : 'NO'}</TableCell>
@@ -100,9 +108,16 @@ const TableBody = (props: TableBodyProps) => {
         <Table>
           <tbody>
             {props.elements.map(
-              (item: { name: string; surname: string; adress: string; age: number }, key) => {
+              (
+                item: { id: string; name: string; surname: string; adress: string; age: number },
+                key
+              ) => {
                 return (
-                  <TableRow selected={false} key={key}>
+                  <TableRow
+                    selected={props.row === item.id}
+                    id={item.id}
+                    onClick={() => parentStore.addSelectedRow(item.id)}
+                    key={key}>
                     <TableCell>{item.name}</TableCell>
                     <TableCell>{item.surname}</TableCell>
                     <TableCell>{item.adress}</TableCell>

@@ -3,21 +3,17 @@ import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import Icon from '../../icons/Icon';
 import Button from '../Button';
-import invoicesStore from '../../stores/invoices';
-import InvoiceFormModal from './InvoiceFormModal';
 import { observer } from 'mobx-react';
-import moment from 'moment';
 import { api } from '../../api/ApiRequests';
-import { Invoice } from '../../stores/invoices';
+
 import parentStore from '../../stores/parent';
-import type { DatePickerProps } from 'antd';
+
 //import { DatePicker, Space } from 'antd';
 import DatePicker from '../DatePicker';
-import sellersStore from '../../stores/sellers';
-import customersStore from '../../stores/customers';
+
+import customersStore, { Customer } from '../../stores/customers';
 import { toast, Toaster } from 'react-hot-toast';
 import Notification from '../Notification';
-moment.suppressDeprecationWarnings = true;
 
 interface ModalProps {
   type: string;
@@ -26,85 +22,79 @@ interface ModalProps {
 }
 
 const Modal = (props: ModalProps) => {
-  const [seller, setSeller] = useState('');
-  const [customer, setCustomer] = useState('');
-  const [date, setDate] = useState('');
-  const [amount, setAmount] = useState(0);
+  const [name, setName] = useState('');
+  const [surname, setSurname] = useState('');
+  const [adress, setAdress] = useState('');
+  const [age, setAge] = useState(0);
   const { id } = useParams();
   const navigate = useNavigate();
   console.log('ID->>>>', id);
-  const onChange = (dateString: any) => {
-    console.log(date, dateString);
-    setDate(moment(dateString).toString());
-  };
+
   const fetchData = async () => {
-    let data: Invoice = {
-      sellerName: '',
-      customerName: '',
-      date: new Date(),
-      amount: 0,
-      sellerId: '',
-      customerId: ''
+    let data: Customer = {
+      name: '',
+      surname: '',
+      adress: '',
+      age: 0
     };
     if (id) {
-      data = (await api.getInvoice(id)).data;
-      setSeller(data.sellerName);
-      setCustomer(data.customerName);
-      setDate(moment(data.date).format('DD.MM.YYYY'));
-      setAmount(data.amount);
+      data = (await api.getCustomer(id)).data;
+      setName(data.name);
+      setSurname(data.surname);
+      setAdress(data.adress);
+      setAge(data.age);
     } else {
-      setSeller('');
-      setCustomer('');
-      setDate('');
-      setAmount(0);
+      setName('');
+      setSurname('');
+      setAdress('');
+      setAge(0);
     }
   };
   useEffect(() => {
     //id && invoicesStore.getInvoice(id);
     fetchData();
   }, []);
-  console.log('Invoice->>>>', invoicesStore.invoice);
-  console.log('seller->>>>', seller);
+
   //if (props.type === 'INVOICE') {
   //setData(invoicesStore.invoice);
   // }
   const saveForm = async () => {
     const body = {
-      sellerName: seller,
-      customerName: customer,
-      date: date,
-      amount: amount
+      name: name,
+      surname: surname,
+      adress: adress,
+      age: age
     };
     if (id) {
-      if (!Number.isNaN(body.amount) && body.amount !== 0) {
-        api.updateInvoice(id, body);
+      if (!Number.isNaN(body.age) && body.age !== 0) {
+        api.updateCustomer(id, body);
         await delay(600); //update 'put' method need more time for execution, after that we refresh data
-        invoicesStore.fetchInvoices();
+        customersStore.fetchCustomers();
         parentStore.addSelectedRow('');
-        navigate('/invoices');
+        navigate('/customers');
       } else {
         notify();
       }
     } else {
-      api.createInvoice(body);
+      api.createCustomer(body);
       await delay(400); //create 'post' method need more time for execution, after that we refresh data
-      invoicesStore.fetchInvoices();
+      customersStore.fetchCustomers();
       parentStore.addSelectedRow('');
-      invoicesStore.toggleModal();
+      customersStore.toggleModal();
     }
   };
   const discardForm = () => {
     if (id) {
-      navigate('/invoices');
+      navigate('/customers');
     } else {
-      invoicesStore.toggleModal();
+      customersStore.toggleModal();
     }
   };
 
   const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
   const notify = () =>
     toast.custom((t) => (
-      <Notification onClick={() => toast.dismiss(t.id)} text="Amount can't be 0 or empty!" />
+      <Notification onClick={() => toast.dismiss(t.id)} text="Age can't be 0 or empty!" />
     ));
   /**<Input
                 type="text"
@@ -127,49 +117,25 @@ const Modal = (props: ModalProps) => {
         <OptionsContainer>
           <OptionsContainer>
             <Option>
-              <Label>Seller</Label>
-              <Select value={seller} onChange={(e) => setSeller(e.target.value)}>
-                {sellersStore.sellers.map((seller, key) => {
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  return <option key={key}>{(seller as any).companyName}</option>;
-                })}
-              </Select>
+              <Label>Name</Label>
+              <Input type="text" onChange={(e) => setName(e.target.value)} value={name} />
             </Option>
             <Option>
-              <Label>Customer</Label>
-              <Select value={customer} onChange={(e) => setCustomer(e.target.value)}>
-                {customersStore.customers.map((customer, key) => {
-                  return (
-                    <option key={key}>
-                      {
-                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                        (customer as any).name + ` ` + (customer as any).surname
-                      }
-                    </option>
-                  );
-                })}
-              </Select>
+              <Label>Surname</Label>
+              <Input type="text" onChange={(e) => setSurname(e.target.value)} value={surname} />
             </Option>
             <Option>
-              <Label>Date</Label>
-              <InputDate
-                onChange={onChange}
-                allowClear={false}
-                value={moment(date, 'DD.MM.YYYY')}
-                format="DD.MM.YYYY"
-                disabledDate={(current) => {
-                  return current && moment(current) > moment(); //no future dates
-                }}
-              />
+              <Label>Adress</Label>
+              <Input type="text" onChange={(e) => setAdress(e.target.value)} value={adress} />
             </Option>
             <Option>
-              <Label>Amount</Label>
+              <Label>Age</Label>
               <Input
                 required
                 min={1}
                 type="number"
-                onChange={(e) => setAmount(parseInt(e.target.value))}
-                value={amount}
+                onChange={(e) => setAge(parseInt(e.target.value))}
+                value={age}
               />
             </Option>
           </OptionsContainer>

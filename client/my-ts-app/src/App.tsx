@@ -9,6 +9,8 @@ import Customers from './screens/Customers';
 import Menu from './components/menus/Menu';
 import OptionsMenu from './components/menus/OptionsMenu';
 import Modal from './components/modals/Modal';
+import CustomersModal from './components/modals/CustomersModal';
+import SellersModal from './components/modals/SellersModal';
 
 function App() {
   const modalOptions = [
@@ -27,10 +29,14 @@ function App() {
           <Route path="/landing-screen" element={<LandingScreen />} />
           <Route path="/home" element={<MainScreen />} />
           <Route path="/invoices" element={<Invoices />}>
-            <Route path=":id" element={<Modal type="test" options={modalOptions} />} />
+            <Route path=":id" element={<Modal type="invoice" options={modalOptions} />} />
           </Route>
-          <Route path="/sellers" element={<Sellers />} />
-          <Route path="/customers" element={<Customers />} />
+          <Route path="/sellers" element={<Sellers />}>
+            <Route path=":id" element={<SellersModal type="seller" />} />
+          </Route>
+          <Route path="/customers" element={<Customers />}>
+            <Route path=":id" element={<CustomersModal type="customer" />} />
+          </Route>
         </Routes>
       </BrowserRouter>
     </div>

@@ -4,9 +4,11 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { api } from '../../api/ApiRequests';
 import Icon from '../../icons/Icon';
+import customersStore from '../../stores/customers';
 import invoicesStore from '../../stores/invoices';
 import parentStore from '../../stores/parent';
 import { Page } from '../../stores/parent';
+import sellersStore from '../../stores/sellers';
 import DeleteModal from '../modals/DeleteModal';
 
 const OptionsMenu = () => {
@@ -20,23 +22,31 @@ const OptionsMenu = () => {
     if (parentStore.activePage === Page.invoices) {
       invoicesStore.toggleModal();
     } else if (parentStore.activePage === Page.sellers) {
-      /* empty */
+      sellersStore.toggleModal();
     } else if (parentStore.activePage === Page.customers) {
-      /* empty */
+      customersStore.toggleModal();
     }
   };
 
   const deleteRow = async () => {
     if (parentStore.activePage === Page.invoices) {
       api.deleteInvoice(parentStore.selectedRow);
-      await delay(600);
+      await delay(700);
       parentStore.addSelectedRow('');
       invoicesStore.fetchInvoices();
       setShowDeleteModal(false);
     } else if (parentStore.activePage === Page.sellers) {
-      /* empty */
+      api.deleteSeller(parentStore.selectedRow);
+      await delay(700);
+      parentStore.addSelectedRow('');
+      sellersStore.fetchSellers();
+      setShowDeleteModal(false);
     } else if (parentStore.activePage === Page.customers) {
-      /* empty */
+      api.deleteCustomer(parentStore.selectedRow);
+      await delay(700);
+      parentStore.addSelectedRow('');
+      customersStore.fetchCustomers();
+      setShowDeleteModal(false);
     }
   };
 
@@ -44,9 +54,9 @@ const OptionsMenu = () => {
     if (parentStore.activePage === Page.invoices) {
       navigate(`${location.pathname}/${parentStore.selectedRow}`);
     } else if (parentStore.activePage === Page.sellers) {
-      /* empty */
+      navigate(`${location.pathname}/${parentStore.selectedRow}`);
     } else if (parentStore.activePage === Page.customers) {
-      /* empty */
+      navigate(`${location.pathname}/${parentStore.selectedRow}`);
     }
   };
 

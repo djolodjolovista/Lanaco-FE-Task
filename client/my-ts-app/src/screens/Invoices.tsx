@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Menu from '../components/menus/Menu';
 import OptionsMenu from '../components/menus/OptionsMenu';
@@ -11,6 +11,9 @@ import parentStore from '../stores/parent';
 import { Page } from '../stores/parent';
 import { useSearchParams, Outlet } from 'react-router-dom';
 import Modal from '../components/modals/Modal';
+import Spinner from '../components/Spinner';
+import Notification from '../components/Notification';
+import Pagination from '../components/Pagination';
 
 const Invoices = () => {
   const header = ['Seller', 'Customer', 'Date', 'Amount'];
@@ -18,7 +21,7 @@ const Invoices = () => {
 
   /*useEffect(() => {
     invoicesStore.fetchInvoices();
-  }, []);*/
+  }, [numberOfPages]);*/
 
   return (
     <>
@@ -26,11 +29,15 @@ const Invoices = () => {
         <Container>
           <PageHeader text="INVOICES" />
           <TableHeader cellsContent={header} />
-          <TableBody
-            row={parentStore.selectedRow}
-            type="INVOICES"
-            elements={invoicesStore.invoices}
-          />
+          {parentStore.loading ? (
+            <Spinner />
+          ) : (
+            <TableBody
+              row={parentStore.selectedRow}
+              type="INVOICES"
+              elements={invoicesStore.invoices}
+            />
+          )}
         </Container>
       </MainContainer>
       {invoicesStore.showModal && <Modal type="Invoices" />}

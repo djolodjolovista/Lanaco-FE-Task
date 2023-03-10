@@ -5,12 +5,13 @@ import Icon from '../icons/Icon';
 interface NotificationProps {
   text: string;
   color?: string;
+  onClick: () => void;
 }
 
-const Notification = ({ color = '218, 114, 119', text }: NotificationProps) => {
+const Notification = ({ color = '218, 114, 119', text, onClick }: NotificationProps) => {
   return (
     <Container color={color}>
-      <IconConatiner>
+      <IconConatiner onClick={onClick}>
         <Icon icon="delete" />
       </IconConatiner>
       <Text>{text}</Text>
@@ -24,9 +25,7 @@ const Container = styled.div<{ color: string }>`
   display: flex;
   flex-direction: column;
   align-items: center;
-  position: absolute;
-  top: 10px;
-  left: 115px;
+
   border: 2px solid black;
   width: 270px;
   border-radius: 15px;

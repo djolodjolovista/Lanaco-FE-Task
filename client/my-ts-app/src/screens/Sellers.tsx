@@ -7,19 +7,34 @@ import TableHeader from '../components/table/TableHeader';
 import sellersStore from '../stores/sellers';
 import parentStore from '../stores/parent';
 import { Page } from '../stores/parent';
+import Spinner from '../components/Spinner';
+import SellersModal from '../components/modals/SellersModal';
+import { Outlet } from 'react-router-dom';
 
 const Sellers = () => {
   const header = ['Name', 'Adress', 'Active'];
   parentStore.changeActivePage(Page.sellers);
 
   return (
-    <MainContainer>
-      <Container>
-        <PageHeader text="SELLERS" />
-        <TableHeader cellsContent={header} />
-        <TableBody row="test" type="SELLERS" elements={sellersStore.sellers} />
-      </Container>
-    </MainContainer>
+    <>
+      <MainContainer>
+        <Container>
+          <PageHeader text="SELLERS" />
+          <TableHeader cellsContent={header} />
+          {parentStore.loading ? (
+            <Spinner />
+          ) : (
+            <TableBody
+              row={parentStore.selectedRow}
+              type="SELLERS"
+              elements={sellersStore.sellers}
+            />
+          )}
+        </Container>
+      </MainContainer>
+      {sellersStore.showModal && <SellersModal type="seller" />}
+      <Outlet />
+    </>
   );
 };
 

@@ -24,6 +24,17 @@ const Container = styled.div`
   display: flex;
 `;
 
+const Submit = styled.input<{ color: string }>`
+  color: black;
+  background: ${(props) => `rgba(${props.color}, 0.5)`};
+  border-radius: 5px;
+  border: 2px solid ${(props) => `rgba(${props.color}, 1)`};
+  width: 80px;
+  &:hover {
+    background: ${(props) => `rgba(${props.color}, 0.7)`};
+  }
+`;
+
 const Text = styled.button<{ color: string }>`
   color: black;
   background: ${(props) => `rgba(${props.color}, 0.5)`};

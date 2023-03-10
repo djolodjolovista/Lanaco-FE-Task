@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import DeleteModal from '../components/modals/DeleteModal';
 import Modal from '../components/modals/Modal';
 import Notification from '../components/Notification';
+import { toast, Toaster } from 'react-hot-toast';
 
 const MainScreen = () => {
   const deleteModalOptions = {
@@ -17,11 +18,17 @@ const MainScreen = () => {
     { text: 'Date' },
     { text: 'Amount' }
   ];
+
+  const notify = () =>
+    toast.custom((t) => (
+      <Notification onClick={() => toast.dismiss(t.id)} text="testiramo notifikaciju" />
+    ));
   //<Modal title="Create an Invoice" options={modalOptions} />
 
   return (
     <Container>
-      <Notification text="Date in future is not possible!" />
+      <button onClick={() => notify()}>test</button>
+      <Toaster position="top-right" reverseOrder={false} />
     </Container>
   );
 };

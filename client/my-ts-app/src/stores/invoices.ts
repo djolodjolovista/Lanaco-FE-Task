@@ -2,6 +2,7 @@
 //@ts-ignore
 import { makeAutoObservable, flow } from 'mobx';
 import { api } from '../api/ApiRequests';
+import parentStore from './parent';
 
 export interface Invoice {
   sellerName: string;
@@ -26,8 +27,11 @@ class Invoices {
   fetchInvoices = flow(function* (this: Invoices) {
     this.invoices = [];
     try {
+      parentStore.toggleLoading(true);
       this.invoices = (yield api.getAllInvoices()).data;
+      parentStore.toggleLoading(false);
     } catch (error) {
+      parentStore.toggleLoading(false);
       console.log(error);
     }
   });
@@ -42,6 +46,10 @@ class Invoices {
 
   get selectedInvoice() {
     return this.invoice;
+  }
+
+  get numberOfPages() {
+    return Math.round(this.invoices.length / 4);
   }
 
   toggleModal() {

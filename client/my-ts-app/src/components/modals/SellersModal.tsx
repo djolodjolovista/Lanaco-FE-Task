@@ -13,7 +13,7 @@ import parentStore from '../../stores/parent';
 import type { DatePickerProps } from 'antd';
 //import { DatePicker, Space } from 'antd';
 import DatePicker from '../DatePicker';
-import sellersStore from '../../stores/sellers';
+import sellersStore, { Seller } from '../../stores/sellers';
 import customersStore from '../../stores/customers';
 import { toast, Toaster } from 'react-hot-toast';
 import Notification from '../Notification';
@@ -26,85 +26,75 @@ interface ModalProps {
 }
 
 const Modal = (props: ModalProps) => {
-  const [seller, setSeller] = useState('');
-  const [customer, setCustomer] = useState('');
-  const [date, setDate] = useState('');
-  const [amount, setAmount] = useState(0);
+  const [companyName, setCompanyName] = useState('');
+  const [adress, setAdress] = useState('');
+  const [isActive, setIsActive] = useState(false);
+
   const { id } = useParams();
   const navigate = useNavigate();
   console.log('ID->>>>', id);
-  const onChange = (dateString: any) => {
-    console.log(date, dateString);
-    setDate(moment(dateString).toString());
-  };
+
   const fetchData = async () => {
-    let data: Invoice = {
-      sellerName: '',
-      customerName: '',
-      date: new Date(),
-      amount: 0,
-      sellerId: '',
-      customerId: ''
+    let data: Seller = {
+      companyName: '',
+      hqAdress: '',
+      isActive: false
     };
     if (id) {
-      data = (await api.getInvoice(id)).data;
-      setSeller(data.sellerName);
-      setCustomer(data.customerName);
-      setDate(moment(data.date).format('DD.MM.YYYY'));
-      setAmount(data.amount);
+      data = (await api.getSeller(id)).data;
+      setCompanyName(data.companyName);
+      setAdress(data.hqAdress);
+      setIsActive(data.isActive);
     } else {
-      setSeller('');
-      setCustomer('');
-      setDate('');
-      setAmount(0);
+      setCompanyName('');
+      setAdress('');
+      setIsActive(false);
     }
   };
   useEffect(() => {
     //id && invoicesStore.getInvoice(id);
     fetchData();
   }, []);
-  console.log('Invoice->>>>', invoicesStore.invoice);
-  console.log('seller->>>>', seller);
+
   //if (props.type === 'INVOICE') {
   //setData(invoicesStore.invoice);
   // }
   const saveForm = async () => {
     const body = {
-      sellerName: seller,
-      customerName: customer,
-      date: date,
-      amount: amount
+      companyName: companyName,
+      hqAdress: adress,
+      isActive: isActive
     };
     if (id) {
-      if (!Number.isNaN(body.amount) && body.amount !== 0) {
-        api.updateInvoice(id, body);
-        await delay(600); //update 'put' method need more time for execution, after that we refresh data
-        invoicesStore.fetchInvoices();
+      if (body) {
+        api.updateSeller(id, body);
+        await delay(700); //update 'put' method need more time for execution, after that we refresh data
+        sellersStore.fetchSellers();
         parentStore.addSelectedRow('');
-        navigate('/invoices');
+        navigate('/sellers');
       } else {
         notify();
       }
     } else {
-      api.createInvoice(body);
-      await delay(400); //create 'post' method need more time for execution, after that we refresh data
-      invoicesStore.fetchInvoices();
+      api.createSeller(body);
+      await delay(600); //create 'post' method need more time for execution, after that we refresh data
+      sellersStore.fetchSellers();
       parentStore.addSelectedRow('');
-      invoicesStore.toggleModal();
+      sellersStore.toggleModal();
     }
   };
   const discardForm = () => {
     if (id) {
-      navigate('/invoices');
+      navigate('/sellers');
     } else {
-      invoicesStore.toggleModal();
+      sellersStore.toggleModal();
     }
   };
 
   const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
   const notify = () =>
     toast.custom((t) => (
-      <Notification onClick={() => toast.dismiss(t.id)} text="Amount can't be 0 or empty!" />
+      <Notification onClick={() => toast.dismiss(t.id)} text="All fields are required!" />
     ));
   /**<Input
                 type="text"
@@ -127,49 +117,36 @@ const Modal = (props: ModalProps) => {
         <OptionsContainer>
           <OptionsContainer>
             <Option>
-              <Label>Seller</Label>
-              <Select value={seller} onChange={(e) => setSeller(e.target.value)}>
-                {sellersStore.sellers.map((seller, key) => {
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  return <option key={key}>{(seller as any).companyName}</option>;
-                })}
-              </Select>
-            </Option>
-            <Option>
-              <Label>Customer</Label>
-              <Select value={customer} onChange={(e) => setCustomer(e.target.value)}>
-                {customersStore.customers.map((customer, key) => {
-                  return (
-                    <option key={key}>
-                      {
-                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                        (customer as any).name + ` ` + (customer as any).surname
-                      }
-                    </option>
-                  );
-                })}
-              </Select>
-            </Option>
-            <Option>
-              <Label>Date</Label>
-              <InputDate
-                onChange={onChange}
-                allowClear={false}
-                value={moment(date, 'DD.MM.YYYY')}
-                format="DD.MM.YYYY"
-                disabledDate={(current) => {
-                  return current && moment(current) > moment(); //no future dates
-                }}
+              <Label>Company name</Label>
+              <Input
+                type="text"
+                onChange={(e) => setCompanyName(e.target.value)}
+                value={companyName}
               />
             </Option>
             <Option>
-              <Label>Amount</Label>
+              <Label>Adress</Label>
+              <Input type="text" onChange={(e) => setAdress(e.target.value)} value={adress} />
+            </Option>
+            <Option>
+              <Label>Active</Label>
+              <Label htmlFor="yes">Yes</Label>
               <Input
-                required
-                min={1}
-                type="number"
-                onChange={(e) => setAmount(parseInt(e.target.value))}
-                value={amount}
+                type="radio"
+                name="active"
+                value="YES"
+                key="yes"
+                checked={isActive}
+                onChange={() => setIsActive(true)}
+              />
+              <Label htmlFor="no">No</Label>
+              <Input
+                type="radio"
+                name="active"
+                value="NO"
+                key="no"
+                checked={!isActive}
+                onChange={() => setIsActive(false)}
               />
             </Option>
           </OptionsContainer>

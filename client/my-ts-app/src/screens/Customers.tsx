@@ -1,7 +1,10 @@
 import { observer } from 'mobx-react';
 import React from 'react';
+import { Outlet } from 'react-router-dom';
 import styled from 'styled-components';
+import CustomersModal from '../components/modals/CustomersModal';
 import PageHeader from '../components/PageHeader';
+import Spinner from '../components/Spinner';
 import TableBody from '../components/table/TableBody';
 import TableHeader from '../components/table/TableHeader';
 import customersStore from '../stores/customers';
@@ -13,13 +16,25 @@ const Customers = () => {
   parentStore.changeActivePage(Page.customers);
 
   return (
-    <MainContainer>
-      <Container>
-        <PageHeader text="CUSTOMERS" />
-        <TableHeader cellsContent={header} />
-        <TableBody row="test" type="CUSTOMERS" elements={customersStore.customers} />
-      </Container>
-    </MainContainer>
+    <>
+      <MainContainer>
+        <Container>
+          <PageHeader text="CUSTOMERS" />
+          <TableHeader cellsContent={header} />
+          {parentStore.loading ? (
+            <Spinner />
+          ) : (
+            <TableBody
+              row={parentStore.selectedRow}
+              type="CUSTOMERS"
+              elements={customersStore.customers}
+            />
+          )}
+        </Container>
+        {customersStore.showModal && <CustomersModal type="customer" />}
+      </MainContainer>
+      <Outlet />
+    </>
   );
 };
 

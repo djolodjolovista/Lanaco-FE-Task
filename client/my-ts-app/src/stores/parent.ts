@@ -13,6 +13,7 @@ class Parent {
   activePage: Page = Page.main;
   showModal = false;
   selectedRow = '';
+  loading = false;
   constructor() {
     makeAutoObservable(this, {}, { autoBind: true });
   }
@@ -33,6 +34,10 @@ class Parent {
 
   toggleModal() {
     this.showModal = !this.showModal;
+  }
+
+  toggleLoading(state: boolean) {
+    this.loading = state;
   }
 
   get enabledMenuOptions() {
