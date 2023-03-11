@@ -55,6 +55,18 @@ class Invoices {
   toggleModal() {
     this.showModal = !this.showModal;
   }
+
+  checkSellersOnInvoices() {
+    return invoicesStore.invoices.find(
+      (invoice) => (invoice as Invoice).sellerId === parentStore.selectedRow
+    );
+  }
+
+  checkCustomerOnInvoices() {
+    return invoicesStore.invoices.find(
+      (invoice) => (invoice as Invoice).customerId === parentStore.selectedRow
+    );
+  }
 }
 const invoicesStore = new Invoices();
 export default invoicesStore;

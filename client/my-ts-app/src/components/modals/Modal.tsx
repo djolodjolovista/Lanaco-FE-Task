@@ -55,7 +55,7 @@ const Modal = (props: ModalProps) => {
     } else {
       setSeller('');
       setCustomer('');
-      setDate('');
+      setDate(moment().format('DD.MM.YYYY'));
       setAmount(0);
     }
   };
@@ -86,11 +86,15 @@ const Modal = (props: ModalProps) => {
         notify();
       }
     } else {
-      api.createInvoice(body);
-      await delay(400); //create 'post' method need more time for execution, after that we refresh data
-      invoicesStore.fetchInvoices();
-      parentStore.addSelectedRow('');
-      invoicesStore.toggleModal();
+      if (sellersStore.checkSellerIsActive(seller)) {
+        api.createInvoice(body);
+        await delay(400); //create 'post' method need more time for execution, after that we refresh data
+        invoicesStore.fetchInvoices();
+        parentStore.addSelectedRow('');
+        invoicesStore.toggleModal();
+      } else {
+        notifyNotActiveSeller();
+      }
     }
   };
   const discardForm = () => {
@@ -105,6 +109,10 @@ const Modal = (props: ModalProps) => {
   const notify = () =>
     toast.custom((t) => (
       <Notification onClick={() => toast.dismiss(t.id)} text="Amount can't be 0 or empty!" />
+    ));
+  const notifyNotActiveSeller = () =>
+    toast.custom((t) => (
+      <Notification onClick={() => toast.dismiss(t.id)} text="Seller is not active!" />
     ));
   /**<Input
                 type="text"

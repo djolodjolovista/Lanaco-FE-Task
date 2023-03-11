@@ -1,5 +1,6 @@
 import { observer } from 'mobx-react';
 import React, { useState } from 'react';
+import toast, { Toaster } from 'react-hot-toast';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { api } from '../../api/ApiRequests';
@@ -10,6 +11,7 @@ import parentStore from '../../stores/parent';
 import { Page } from '../../stores/parent';
 import sellersStore from '../../stores/sellers';
 import DeleteModal from '../modals/DeleteModal';
+import Notification from '../Notification';
 
 const OptionsMenu = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -36,17 +38,26 @@ const OptionsMenu = () => {
       invoicesStore.fetchInvoices();
       setShowDeleteModal(false);
     } else if (parentStore.activePage === Page.sellers) {
-      api.deleteSeller(parentStore.selectedRow);
-      await delay(700);
-      parentStore.addSelectedRow('');
-      sellersStore.fetchSellers();
-      setShowDeleteModal(false);
+      if (!invoicesStore.checkSellersOnInvoices()) {
+        //verification of the seller on the invoices
+        api.deleteSeller(parentStore.selectedRow);
+        await delay(700);
+        parentStore.addSelectedRow('');
+        sellersStore.fetchSellers();
+        setShowDeleteModal(false);
+      } else {
+        notify();
+      }
     } else if (parentStore.activePage === Page.customers) {
-      api.deleteCustomer(parentStore.selectedRow);
-      await delay(700);
-      parentStore.addSelectedRow('');
-      customersStore.fetchCustomers();
-      setShowDeleteModal(false);
+      if (!invoicesStore.checkCustomerOnInvoices()) {
+        api.deleteCustomer(parentStore.selectedRow);
+        await delay(700);
+        parentStore.addSelectedRow('');
+        customersStore.fetchCustomers();
+        setShowDeleteModal(false);
+      } else {
+        notifyForCustomer();
+      }
     }
   };
 
@@ -59,6 +70,19 @@ const OptionsMenu = () => {
       navigate(`${location.pathname}/${parentStore.selectedRow}`);
     }
   };
+
+  const notify = () =>
+    toast.custom((t) => (
+      <Notification onClick={() => toast.dismiss(t.id)} text="The seller exists on the invoice!" />
+    ));
+
+  const notifyForCustomer = () =>
+    toast.custom((t) => (
+      <Notification
+        onClick={() => toast.dismiss(t.id)}
+        text="The customer exists on the invoice!"
+      />
+    ));
 
   console.log('Location->>>>>', location.pathname);
   return (
@@ -80,6 +104,7 @@ const OptionsMenu = () => {
           <Icon icon="delete" size="35" />
         </IconConatiner>
       </MainContainer>
+      <Toaster position="top-right" reverseOrder={false} />
       {showDeleteModal && (
         <DeleteModal label="Are you sure ?" yes={deleteRow} no={() => setShowDeleteModal(false)} />
       )}

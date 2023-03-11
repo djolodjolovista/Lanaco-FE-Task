@@ -42,6 +42,10 @@ class Sellers {
   toggleModal() {
     this.showModal = !this.showModal;
   }
+
+  checkSellerIsActive(name: string) {
+    return this.sellers.find((seller: Seller) => seller.companyName === name && seller.isActive);
+  }
 }
 
 const sellersStore = new Sellers();

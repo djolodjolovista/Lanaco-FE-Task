@@ -43,6 +43,18 @@ class Parent {
   get enabledMenuOptions() {
     return this.selectedRow !== '';
   }
+
+  /*checkSellersOnInvoices() {
+    return invoicesStore.invoices.find(
+      (invoice) => (invoice as Invoice).sellerId === this.selectedRow
+    );
+  }
+
+  checkCustomerOnInvoices() {
+    return invoicesStore.invoices.find(
+      (invoice) => (invoice as Invoice).customerId === this.selectedRow
+    );
+  }*/
 }
 
 const parentStore = new Parent();

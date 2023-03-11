@@ -38,12 +38,24 @@ interface TableBodyCustomers {
 
 const TableBody = (props: TableBodyProps) => {
   const navigate = useNavigate();
+  const [elements, setElements] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [elementsPerPage] = useState(4);
+  useEffect(() => {
+    setElements(invoicesStore.invoices);
+  }, []);
+  const indexOfLastElement = currentPage * elementsPerPage;
+  const indexOfFirstElement = indexOfLastElement - elementsPerPage;
+  const currentElements = elements.slice(indexOfFirstElement, indexOfLastElement);
+
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
   if (props.type === 'INVOICES' && (props.elements as unknown as TableBodyInvoices)) {
     return (
       <TableContainer>
         <Table>
           <tbody>
-            {props.elements.map(
+            {currentElements.map(
               (
                 item: {
                   id: string;
@@ -73,6 +85,12 @@ const TableBody = (props: TableBodyProps) => {
             )}
           </tbody>
         </Table>
+        <Pagination
+          currentPage={currentPage}
+          elementsPerPage={elementsPerPage}
+          totalElements={elements.length}
+          paginate={paginate}
+        />
       </TableContainer>
     );
   } else if (props.type === 'SELLERS' && (props.elements as unknown as TableBodySellers)) {
