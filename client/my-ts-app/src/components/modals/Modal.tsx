@@ -13,8 +13,8 @@ import parentStore from '../../stores/parent';
 import type { DatePickerProps } from 'antd';
 //import { DatePicker, Space } from 'antd';
 import DatePicker from '../DatePicker';
-import sellersStore from '../../stores/sellers';
-import customersStore from '../../stores/customers';
+import sellersStore, { Seller } from '../../stores/sellers';
+import customersStore, { Customer } from '../../stores/customers';
 import { toast, Toaster } from 'react-hot-toast';
 import Notification from '../Notification';
 moment.suppressDeprecationWarnings = true;
@@ -33,21 +33,31 @@ const Modal = (props: ModalProps) => {
   const { id } = useParams();
   const navigate = useNavigate();
   console.log('ID->>>>', id);
-  const onChange = (dateString: any) => {
-    console.log(date, dateString);
-    setDate(moment(dateString).toString());
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const onChange = (date: any, dateString: any) => {
+    console.log('Datum->>>>', date);
+    console.log('Datum string->>>>', dateString);
+    //setDate(moment(date).format('DD.MM.YYYY').toString());
+    setDate(dateString);
   };
   const fetchData = async () => {
     let data: Invoice = {
+      id: '',
       sellerName: '',
       customerName: '',
-      date: new Date(),
+      date: moment().format('DD.MM.YYYY'),
       amount: 0,
       sellerId: '',
       customerId: ''
     };
     if (id) {
-      data = (await api.getInvoice(id)).data;
+      try {
+        data = (await api.getInvoice(id)).data;
+      } catch (error) {
+        console.log(error);
+        navigate('/invoices');
+      }
       setSeller(data.sellerName);
       setCustomer(data.customerName);
       setDate(moment(data.date).format('DD.MM.YYYY'));
@@ -86,14 +96,16 @@ const Modal = (props: ModalProps) => {
         notify();
       }
     } else {
-      if (sellersStore.checkSellerIsActive(seller)) {
+      if (!sellersStore.checkSellerIsActive(seller)) {
+        notifyNotActiveSeller();
+      } else if (body.amount === 0) {
+        notifyAmount();
+      } else {
         api.createInvoice(body);
-        await delay(400); //create 'post' method need more time for execution, after that we refresh data
+        await delay(600); //create 'post' method need more time for execution, after that we refresh data
         invoicesStore.fetchInvoices();
         parentStore.addSelectedRow('');
         invoicesStore.toggleModal();
-      } else {
-        notifyNotActiveSeller();
       }
     }
   };
@@ -113,6 +125,10 @@ const Modal = (props: ModalProps) => {
   const notifyNotActiveSeller = () =>
     toast.custom((t) => (
       <Notification onClick={() => toast.dismiss(t.id)} text="Seller is not active!" />
+    ));
+  const notifyAmount = () =>
+    toast.custom((t) => (
+      <Notification onClick={() => toast.dismiss(t.id)} text="Amount must be greater than 0 !" />
     ));
   /**<Input
                 type="text"
@@ -137,22 +153,24 @@ const Modal = (props: ModalProps) => {
             <Option>
               <Label>Seller</Label>
               <Select value={seller} onChange={(e) => setSeller(e.target.value)}>
-                {sellersStore.sellers.map((seller, key) => {
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  return <option key={key}>{(seller as any).companyName}</option>;
+                <option value="">Choose seller</option>
+                {sellersStore.sellers.map((seller: Seller, key) => {
+                  return (
+                    <option value={seller.companyName} key={key}>
+                      {seller.companyName}
+                    </option>
+                  );
                 })}
               </Select>
             </Option>
             <Option>
               <Label>Customer</Label>
               <Select value={customer} onChange={(e) => setCustomer(e.target.value)}>
-                {customersStore.customers.map((customer, key) => {
+                <option value="">Choose customer</option>
+                {customersStore.customers.map((customer: Customer, key) => {
                   return (
-                    <option key={key}>
-                      {
-                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                        (customer as any).name + ` ` + (customer as any).surname
-                      }
+                    <option key={key} value={customer.name + ` ` + customer.surname}>
+                      {customer.name + ` ` + customer.surname}
                     </option>
                   );
                 })}
@@ -163,6 +181,7 @@ const Modal = (props: ModalProps) => {
               <InputDate
                 onChange={onChange}
                 allowClear={false}
+                showToday={false}
                 value={moment(date, 'DD.MM.YYYY')}
                 format="DD.MM.YYYY"
                 disabledDate={(current) => {

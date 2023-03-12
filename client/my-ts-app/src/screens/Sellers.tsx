@@ -10,6 +10,7 @@ import { Page } from '../stores/parent';
 import Spinner from '../components/Spinner';
 import SellersModal from '../components/modals/SellersModal';
 import { Outlet } from 'react-router-dom';
+import TableBodySellers from '../components/table/TableBodySellers';
 
 const Sellers = () => {
   const header = ['Name', 'Adress', 'Active'];
@@ -24,7 +25,7 @@ const Sellers = () => {
           {parentStore.loading ? (
             <Spinner />
           ) : (
-            <TableBody
+            <TableBodySellers
               row={parentStore.selectedRow}
               type="SELLERS"
               elements={sellersStore.sellers}

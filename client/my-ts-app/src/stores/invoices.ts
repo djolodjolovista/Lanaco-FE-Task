@@ -5,9 +5,10 @@ import { api } from '../api/ApiRequests';
 import parentStore from './parent';
 
 export interface Invoice {
+  id: string;
   sellerName: string;
   customerName: string;
-  date: Date | undefined;
+  date: string | undefined;
   amount: number;
   sellerId: string;
   customerId: string;

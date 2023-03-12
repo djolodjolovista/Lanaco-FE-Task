@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
 // eslint-disable-next-line react/prop-types
@@ -21,7 +21,6 @@ const AppPagination = ({ elementsPerPage, totalElements, paginate, currentPage }
   return (
     <MainContainer>
       <ChangePage
-        href="#"
         onClick={() => {
           currentPage > 1 && paginate(currentPage - 1);
           //setClicked(true);
@@ -30,7 +29,6 @@ const AppPagination = ({ elementsPerPage, totalElements, paginate, currentPage }
       </ChangePage>
       <CurrentPage>{currentPage}</CurrentPage>
       <ChangePage
-        href="#"
         onClick={() => {
           currentPage < pageNumbers.length && paginate(currentPage + 1);
           //setClicked(true);
@@ -50,7 +48,7 @@ const MainContainer = styled.div`
   justify-content: flex-end;
 `;
 
-const TotalPages = styled.a`
+const TotalPages = styled.span`
   margin-left: 10px;
   text-decoration: none;
   ${(props) => (props.clicked ? `color: blue;` : `color: black;`)}
@@ -58,6 +56,9 @@ const TotalPages = styled.a`
   border-radius: 5px;
   padding: 1px 10px;
   font-weight: bold;
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 const CurrentPage = styled(TotalPages)`

@@ -14,6 +14,7 @@ import Modal from '../components/modals/Modal';
 import Spinner from '../components/Spinner';
 import Notification from '../components/Notification';
 import Pagination from '../components/Pagination';
+import TableBodyInvoices from '../components/table/TableBodyInvoices';
 
 const Invoices = () => {
   const header = ['Seller', 'Customer', 'Date', 'Amount'];
@@ -32,7 +33,7 @@ const Invoices = () => {
           {parentStore.loading ? (
             <Spinner />
           ) : (
-            <TableBody
+            <TableBodyInvoices
               row={parentStore.selectedRow}
               type="INVOICES"
               elements={invoicesStore.invoices}

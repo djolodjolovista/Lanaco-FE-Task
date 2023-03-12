@@ -6,6 +6,7 @@ import CustomersModal from '../components/modals/CustomersModal';
 import PageHeader from '../components/PageHeader';
 import Spinner from '../components/Spinner';
 import TableBody from '../components/table/TableBody';
+import TableBodyCustomers from '../components/table/TableBodyCustomers';
 import TableHeader from '../components/table/TableHeader';
 import customersStore from '../stores/customers';
 import parentStore from '../stores/parent';
@@ -24,7 +25,7 @@ const Customers = () => {
           {parentStore.loading ? (
             <Spinner />
           ) : (
-            <TableBody
+            <TableBodyCustomers
               row={parentStore.selectedRow}
               type="CUSTOMERS"
               elements={customersStore.customers}
