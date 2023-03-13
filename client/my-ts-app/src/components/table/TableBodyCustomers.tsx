@@ -78,9 +78,9 @@ const TableCell = styled.td`
 `;
 
 const TableRow = styled.tr<{ selected: boolean }>`
-  ${(props) => props.selected && `background: #8080801a;`}
+  ${(props) => props.selected && `background: #2199f347;`}
   &:hover {
-    background: #8080801a;
+    background: #2199f347;
     cursor: pointer;
   }
 `;

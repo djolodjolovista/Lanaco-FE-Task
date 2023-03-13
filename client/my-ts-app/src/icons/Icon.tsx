@@ -1,20 +1,14 @@
 import React from 'react';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-ignore
 import { ReactComponent as Invoices } from '../icons/invoices.svg';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-ignore
 import { ReactComponent as Sellers } from '../icons/seller.svg';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-ignore
 import { ReactComponent as Customers } from '../icons/customers.svg';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-ignore
 import { ReactComponent as Add } from '../icons/add.svg';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-ignore
 import { ReactComponent as Edit } from '../icons/edit.svg';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-ignore
 import { ReactComponent as Delete } from '../icons/delete.svg';
 

@@ -32,7 +32,6 @@ const TableBodyInvoices = (props: TableBodyProps) => {
                 id={item.id}
                 key={key}
                 onClick={() => {
-                  //navigate(`/invoices/${item.id}`);
                   parentStore.addSelectedRow(item.id);
                 }}>
                 <TableCell>
@@ -87,9 +86,9 @@ const TableCell = styled.td`
 `;
 
 const TableRow = styled.tr<{ selected: boolean }>`
-  ${(props) => props.selected && `background: #8080801a;`}
+  ${(props) => props.selected && `background: #2199f347;`}
   &:hover {
-    background: #8080801a;
+    background: #2199f347;
     cursor: pointer;
   }
 `;
@@ -98,5 +97,6 @@ const RowLink = styled(Link)`
   text-decoration: none;
   &:hover {
     color: blue;
+    text-decoration: underline;
   }
 `;

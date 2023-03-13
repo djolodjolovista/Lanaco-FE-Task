@@ -39,7 +39,6 @@ const OptionsMenu = () => {
       setShowDeleteModal(false);
     } else if (parentStore.activePage === Page.sellers) {
       if (!invoicesStore.checkSellersOnInvoices()) {
-        //verification of the seller on the invoices
         api.deleteSeller(parentStore.selectedRow);
         await delay(700);
         parentStore.addSelectedRow('');

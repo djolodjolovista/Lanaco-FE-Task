@@ -25,7 +25,6 @@ const AppPagination = ({
       <ChangePage
         onClick={() => {
           currentPage > 1 && paginate(currentPage - 1);
-          //setClicked(true);
         }}>
         {'<'}
       </ChangePage>
@@ -33,7 +32,6 @@ const AppPagination = ({
       <ChangePage
         onClick={() => {
           currentPage < pageNumbers.length && paginate(currentPage + 1);
-          //setClicked(true);
         }}>
         {'>'}
       </ChangePage>

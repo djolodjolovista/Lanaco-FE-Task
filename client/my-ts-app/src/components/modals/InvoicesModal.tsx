@@ -31,9 +31,6 @@ const Modal = (props: ModalProps) => {
   const navigate = useNavigate();
 
   const onChange = (date: any, dateString: any) => {
-    console.log('Datum->>>>', date);
-    console.log('Datum string->>>>', dateString);
-    //setDate(moment(date).format('DD.MM.YYYY').toString());
     setDate(dateString);
   };
   const fetchData = async () => {
@@ -90,19 +87,18 @@ const Modal = (props: ModalProps) => {
       } catch (error) {
         console.log(error);
       }
-      await delay(700); //update 'put' method need more time for execution, after that we refresh data
+      await delay(700);
       invoicesStore.fetchInvoices();
       parentStore.addSelectedRow('');
       navigate('/invoices');
     } else {
       //create
       try {
-        console.log('SellerId->>>>', body.sellerId);
         api.createInvoice(body);
       } catch (error) {
         console.log(error);
       }
-      await delay(700); //create 'post' method need more time for execution, after that we refresh data
+      await delay(700);
       invoicesStore.fetchInvoices();
       parentStore.addSelectedRow('');
       invoicesStore.toggleModal();
@@ -132,15 +128,7 @@ const Modal = (props: ModalProps) => {
     toast.custom((t) => (
       <Notification onClick={() => toast.dismiss(t.id)} text="Customer is not selected!" />
     ));
-  /**<Input
-                type="text"
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSeller(e.target.value)}
-                value={seller}
-              />
-              <Input
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCustomer(e.target.value)}
-                value={customer}
-              /> */
+
   return (
     <MainContainer>
       <Container>
@@ -227,7 +215,6 @@ const Modal = (props: ModalProps) => {
 
 export default observer(Modal);
 
-//MainContainer is used for backdrop
 const MainContainer = styled.div`
   position: absolute;
   width: 100%;

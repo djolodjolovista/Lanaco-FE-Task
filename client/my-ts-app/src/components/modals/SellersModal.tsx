@@ -65,7 +65,7 @@ const Modal = (props: ModalProps) => {
       } catch (error) {
         console.log(error);
       }
-      await delay(700); //update 'put' method need more time for execution, after that we refresh data
+      await delay(700);
       sellersStore.fetchSellers();
       parentStore.addSelectedRow('');
       navigate('/sellers');
@@ -75,7 +75,7 @@ const Modal = (props: ModalProps) => {
       } catch (error) {
         console.log(error);
       }
-      await delay(700); //create 'post' method need more time for execution, after that we refresh data
+      await delay(700);
       sellersStore.fetchSellers();
       parentStore.addSelectedRow('');
       sellersStore.toggleModal();
@@ -161,7 +161,6 @@ const Modal = (props: ModalProps) => {
 
 export default observer(Modal);
 
-//MainContainer is used for backdrop
 const MainContainer = styled.div`
   position: absolute;
   width: 100%;

@@ -63,13 +63,13 @@ const Modal = (props: ModalProps) => {
       notify();
     } else if (id) {
       api.updateCustomer(id, body);
-      await delay(700); //update 'put' method need more time for execution, after that we refresh data
+      await delay(700);
       customersStore.fetchCustomers();
       parentStore.addSelectedRow('');
       navigate('/customers');
     } else {
       api.createCustomer(body);
-      await delay(700); //create 'post' method need more time for execution, after that we refresh data
+      await delay(700);
       customersStore.fetchCustomers();
       parentStore.addSelectedRow('');
       customersStore.toggleModal();
@@ -137,7 +137,6 @@ const Modal = (props: ModalProps) => {
 
 export default observer(Modal);
 
-//MainContainer is used for backdrop
 const MainContainer = styled.div`
   position: absolute;
   width: 100%;

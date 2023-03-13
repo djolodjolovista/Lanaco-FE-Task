@@ -17,10 +17,6 @@ const Invoices = () => {
     parentStore.changeActivePage(Page.invoices);
   }, []);
 
-  /*useEffect(() => {
-    invoicesStore.fetchInvoices();
-  }, [numberOfPages]);*/
-
   return (
     <>
       <MainContainer>

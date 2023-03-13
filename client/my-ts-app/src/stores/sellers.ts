@@ -1,5 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-//@ts-ignore
 import { flow, makeAutoObservable } from 'mobx';
 import { api } from '../api/ApiRequests';
 import parentStore from './parent';

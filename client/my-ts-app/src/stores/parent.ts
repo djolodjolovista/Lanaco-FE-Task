@@ -1,5 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-//@ts-ignore
 import { makeAutoObservable, runInAction } from 'mobx';
 
 export enum Page {
@@ -43,18 +41,6 @@ class Parent {
   get enabledMenuOptions() {
     return this.selectedRow !== '';
   }
-
-  /*checkSellersOnInvoices() {
-    return invoicesStore.invoices.find(
-      (invoice) => (invoice as Invoice).sellerId === this.selectedRow
-    );
-  }
-
-  checkCustomerOnInvoices() {
-    return invoicesStore.invoices.find(
-      (invoice) => (invoice as Invoice).customerId === this.selectedRow
-    );
-  }*/
 }
 
 const parentStore = new Parent();
