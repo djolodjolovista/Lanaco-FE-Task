@@ -5,20 +5,13 @@ import Icon from '../../icons/Icon';
 import Button from '../Button';
 import { observer } from 'mobx-react';
 import { api } from '../../api/ApiRequests';
-
 import parentStore from '../../stores/parent';
-
-//import { DatePicker, Space } from 'antd';
-import DatePicker from '../DatePicker';
-
 import customersStore, { Customer } from '../../stores/customers';
 import { toast, Toaster } from 'react-hot-toast';
 import Notification from '../Notification';
 
 interface ModalProps {
-  type: string;
-  //options: { text: string; onClick: (e: React.ChangeEvent) => void }[];
-  options?: { text: string }[];
+  headerText: string;
 }
 
 const Modal = (props: ModalProps) => {
@@ -28,17 +21,22 @@ const Modal = (props: ModalProps) => {
   const [age, setAge] = useState(0);
   const { id } = useParams();
   const navigate = useNavigate();
-  console.log('ID->>>>', id);
 
   const fetchData = async () => {
     let data: Customer = {
       name: '',
       surname: '',
       adress: '',
-      age: 0
+      age: 0,
+      id: ''
     };
     if (id) {
-      data = (await api.getCustomer(id)).data;
+      try {
+        data = (await api.getCustomer(id))?.data;
+      } catch (error) {
+        console.log(error);
+        navigate('/customers');
+      }
       setName(data.name);
       setSurname(data.surname);
       setAdress(data.adress);
@@ -51,13 +49,9 @@ const Modal = (props: ModalProps) => {
     }
   };
   useEffect(() => {
-    //id && invoicesStore.getInvoice(id);
     fetchData();
   }, []);
 
-  //if (props.type === 'INVOICE') {
-  //setData(invoicesStore.invoice);
-  // }
   const saveForm = async () => {
     const body = {
       name: name,
@@ -65,19 +59,17 @@ const Modal = (props: ModalProps) => {
       adress: adress,
       age: age
     };
-    if (id) {
-      if (!Number.isNaN(body.age) && body.age !== 0) {
-        api.updateCustomer(id, body);
-        await delay(600); //update 'put' method need more time for execution, after that we refresh data
-        customersStore.fetchCustomers();
-        parentStore.addSelectedRow('');
-        navigate('/customers');
-      } else {
-        notify();
-      }
+    if (body.name === '' || body.surname === '' || body.adress === '' || body.age === 0) {
+      notify();
+    } else if (id) {
+      api.updateCustomer(id, body);
+      await delay(700); //update 'put' method need more time for execution, after that we refresh data
+      customersStore.fetchCustomers();
+      parentStore.addSelectedRow('');
+      navigate('/customers');
     } else {
       api.createCustomer(body);
-      await delay(400); //create 'post' method need more time for execution, after that we refresh data
+      await delay(700); //create 'post' method need more time for execution, after that we refresh data
       customersStore.fetchCustomers();
       parentStore.addSelectedRow('');
       customersStore.toggleModal();
@@ -85,8 +77,10 @@ const Modal = (props: ModalProps) => {
   };
   const discardForm = () => {
     if (id) {
+      parentStore.addSelectedRow('');
       navigate('/customers');
     } else {
+      parentStore.addSelectedRow('');
       customersStore.toggleModal();
     }
   };
@@ -94,22 +88,13 @@ const Modal = (props: ModalProps) => {
   const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
   const notify = () =>
     toast.custom((t) => (
-      <Notification onClick={() => toast.dismiss(t.id)} text="Age can't be 0 or empty!" />
+      <Notification onClick={() => toast.dismiss(t.id)} text="All fileds are required! (Age > 0)" />
     ));
-  /**<Input
-                type="text"
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSeller(e.target.value)}
-                value={seller}
-              />
-              <Input
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCustomer(e.target.value)}
-                value={customer}
-              /> */
   return (
     <MainContainer>
       <Container>
         <HeaderContainer>
-          <Header>Edit an {props.type}</Header>
+          <Header>{props.headerText}</Header>
           <IconConatiner onClick={discardForm}>
             <Icon icon="delete" />
           </IconConatiner>
@@ -216,13 +201,6 @@ const Input = styled.input`
   border-radius: 5px;
 `;
 
-const Select = styled.select`
-  margin-top: 3px;
-  border: 2px solid gray;
-  border-radius: 5px;
-  width: 100%;
-`;
-
 const ButtonsContainer = styled.div`
   display: flex;
   flex-direction: row;
@@ -241,10 +219,3 @@ const IconConatiner = styled.div`
 `;
 
 const ModalButton = styled(Button)``;
-
-const InputDate = styled(DatePicker)`
-  width: 100%;
-  &:hover {
-    border: 1px solid black;
-  }
-`;

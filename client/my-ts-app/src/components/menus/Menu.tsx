@@ -8,12 +8,14 @@ import { Page } from '../../stores/parent';
 
 const Menu = () => {
   const navigate = useNavigate();
+
   return (
     <MainContainer>
       <IconConatiner
         onClick={() => {
-          navigate('/invoices');
           parentStore.changeActivePage(Page.invoices);
+          parentStore.addSelectedRow('');
+          navigate('/invoices');
         }}
         active={parentStore.currentPage === Page.invoices}>
         <Icon icon="invoices" />
@@ -21,8 +23,9 @@ const Menu = () => {
 
       <IconConatiner
         onClick={() => {
-          navigate('/sellers');
           parentStore.changeActivePage(Page.sellers);
+          parentStore.addSelectedRow('');
+          navigate('/sellers');
         }}
         active={parentStore.currentPage === Page.sellers}>
         <Icon icon="sellers" />
@@ -30,8 +33,9 @@ const Menu = () => {
 
       <IconConatiner
         onClick={() => {
-          navigate('/customers');
           parentStore.changeActivePage(Page.customers);
+          parentStore.addSelectedRow('');
+          navigate('/customers');
         }}
         active={parentStore.currentPage === Page.customers}>
         <Icon icon="customers" />

@@ -1,68 +1,48 @@
 import { observer } from 'mobx-react';
-import moment from 'moment';
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import invoicesStore from '../../stores/invoices';
 import parentStore from '../../stores/parent';
 import Pagination from '../../components/Pagination';
-import customersStore from '../../stores/customers';
+import { Customer } from '../../stores/customers';
 
 interface TableBodyProps {
-  elements: any[];
-  type: string;
+  elements: Customer[];
   row: string;
 }
 
-interface TableBodyCustomers {
-  name: string;
-  surname: string;
-  adress: string;
-  age: number;
-}
-
 const TableBodyCustomers = (props: TableBodyProps) => {
-  const navigate = useNavigate();
-  const [elements, setElements] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [elementsPerPage] = useState(4);
-  useEffect(() => {
-    setElements(customersStore.customers);
-  }, []);
+
   const indexOfLastElement = currentPage * elementsPerPage;
   const indexOfFirstElement = indexOfLastElement - elementsPerPage;
-  const currentElements = elements.slice(indexOfFirstElement, indexOfLastElement);
+  const currentElements = props.elements.slice(indexOfFirstElement, indexOfLastElement);
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
   return (
     <TableContainer>
       <Table>
         <tbody>
-          {currentElements.map(
-            (
-              item: { id: string; name: string; surname: string; adress: string; age: number },
-              key
-            ) => {
-              return (
-                <TableRow
-                  selected={props.row === item.id}
-                  id={item.id}
-                  onClick={() => parentStore.addSelectedRow(item.id)}
-                  key={key}>
-                  <TableCell>{item.name}</TableCell>
-                  <TableCell>{item.surname}</TableCell>
-                  <TableCell>{item.adress}</TableCell>
-                  <TableCell>{item.age}</TableCell>
-                </TableRow>
-              );
-            }
-          )}
+          {currentElements.map((item, key) => {
+            return (
+              <TableRow
+                selected={props.row === item.id}
+                id={item.id}
+                onClick={() => parentStore.addSelectedRow(item.id)}
+                key={key}>
+                <TableCell>{item.name}</TableCell>
+                <TableCell>{item.surname}</TableCell>
+                <TableCell>{item.adress}</TableCell>
+                <TableCell>{item.age}</TableCell>
+              </TableRow>
+            );
+          })}
         </tbody>
       </Table>
       <Pagination
         currentPage={currentPage}
         elementsPerPage={elementsPerPage}
-        totalElements={elements.length}
+        totalElements={props.elements.length}
         paginate={paginate}
       />
     </TableContainer>

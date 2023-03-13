@@ -1,39 +1,23 @@
 import { observer } from 'mobx-react';
-import moment from 'moment';
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import invoicesStore, { Invoice } from '../../stores/invoices';
+import { Invoice } from '../../stores/invoices';
 import parentStore from '../../stores/parent';
 import Pagination from '../../components/Pagination';
 
 interface TableBodyProps {
-  elements: any[];
-  type: string;
+  elements: Invoice[];
   row: string;
 }
 
-interface TableBodyInvoices {
-  sellerName: string;
-  customerName: string;
-  date: Date;
-  amount: string;
-  id: string;
-  sellerId: string;
-  customerId: string;
-}
-
 const TableBodyInvoices = (props: TableBodyProps) => {
-  const navigate = useNavigate();
-  const [elements, setElements] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [elementsPerPage] = useState(4);
-  useEffect(() => {
-    setElements(invoicesStore.invoices);
-  }, []);
+
   const indexOfLastElement = currentPage * elementsPerPage;
   const indexOfFirstElement = indexOfLastElement - elementsPerPage;
-  const currentElements = elements.slice(indexOfFirstElement, indexOfLastElement);
+  const currentElements = props.elements.slice(indexOfFirstElement, indexOfLastElement);
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
@@ -41,7 +25,7 @@ const TableBodyInvoices = (props: TableBodyProps) => {
     <TableContainer>
       <Table>
         <tbody>
-          {currentElements.map((item: Invoice, key) => {
+          {currentElements.map((item, key) => {
             return (
               <TableRow
                 selected={props.row === item.id}
@@ -51,9 +35,11 @@ const TableBodyInvoices = (props: TableBodyProps) => {
                   //navigate(`/invoices/${item.id}`);
                   parentStore.addSelectedRow(item.id);
                 }}>
-                <TableCell>{item.sellerName}</TableCell>
                 <TableCell>
-                  <a href={`/customers/${item.customerId}`}>{item.customerName}</a>
+                  <RowLink to={`/sellers/${item.sellerId}`}>{item.sellerName}</RowLink>
+                </TableCell>
+                <TableCell>
+                  <RowLink to={`/customers/${item.customerId}`}>{item.customerName}</RowLink>
                 </TableCell>
                 <TableCell>{item.date}</TableCell>
                 <TableCell>{item.amount}$</TableCell>
@@ -65,7 +51,7 @@ const TableBodyInvoices = (props: TableBodyProps) => {
       <Pagination
         currentPage={currentPage}
         elementsPerPage={elementsPerPage}
-        totalElements={elements.length}
+        totalElements={props.elements.length}
         paginate={paginate}
       />
     </TableContainer>
@@ -105,5 +91,12 @@ const TableRow = styled.tr<{ selected: boolean }>`
   &:hover {
     background: #8080801a;
     cursor: pointer;
+  }
+`;
+
+const RowLink = styled(Link)`
+  text-decoration: none;
+  &:hover {
+    color: blue;
   }
 `;

@@ -4,14 +4,11 @@ import styled from 'styled-components';
 import Icon from '../../icons/Icon';
 import Button from '../Button';
 import invoicesStore from '../../stores/invoices';
-import InvoiceFormModal from './InvoiceFormModal';
 import { observer } from 'mobx-react';
 import moment from 'moment';
 import { api } from '../../api/ApiRequests';
 import { Invoice } from '../../stores/invoices';
 import parentStore from '../../stores/parent';
-import type { DatePickerProps } from 'antd';
-//import { DatePicker, Space } from 'antd';
 import DatePicker from '../DatePicker';
 import sellersStore, { Seller } from '../../stores/sellers';
 import customersStore, { Customer } from '../../stores/customers';
@@ -20,9 +17,7 @@ import Notification from '../Notification';
 moment.suppressDeprecationWarnings = true;
 
 interface ModalProps {
-  type: string;
-  //options: { text: string; onClick: (e: React.ChangeEvent) => void }[];
-  options?: { text: string }[];
+  headerText: string;
 }
 
 const Modal = (props: ModalProps) => {
@@ -30,11 +25,11 @@ const Modal = (props: ModalProps) => {
   const [customer, setCustomer] = useState('');
   const [date, setDate] = useState('');
   const [amount, setAmount] = useState(0);
+  const [sellerId, setSellerId] = useState('');
+  const [customerId, setCustomerId] = useState('');
   const { id } = useParams();
   const navigate = useNavigate();
-  console.log('ID->>>>', id);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onChange = (date: any, dateString: any) => {
     console.log('Datum->>>>', date);
     console.log('Datum string->>>>', dateString);
@@ -53,14 +48,14 @@ const Modal = (props: ModalProps) => {
     };
     if (id) {
       try {
-        data = (await api.getInvoice(id)).data;
+        data = (await api.getInvoice(id))?.data;
       } catch (error) {
         console.log(error);
         navigate('/invoices');
       }
       setSeller(data.sellerName);
       setCustomer(data.customerName);
-      setDate(moment(data.date).format('DD.MM.YYYY'));
+      setDate(moment(data.date, 'DD.MM.YYYY').format('DD.MM.YYYY'));
       setAmount(data.amount);
     } else {
       setSeller('');
@@ -70,58 +65,61 @@ const Modal = (props: ModalProps) => {
     }
   };
   useEffect(() => {
-    //id && invoicesStore.getInvoice(id);
     fetchData();
   }, []);
-  console.log('Invoice->>>>', invoicesStore.invoice);
-  console.log('seller->>>>', seller);
-  //if (props.type === 'INVOICE') {
-  //setData(invoicesStore.invoice);
-  // }
+
   const saveForm = async () => {
     const body = {
       sellerName: seller,
       customerName: customer,
       date: date,
-      amount: amount
+      amount: amount,
+      sellerId: sellerId,
+      customerId: customerId
     };
-    if (id) {
-      if (!Number.isNaN(body.amount) && body.amount !== 0) {
+    if (!sellersStore.checkSellerIsActive(seller)) {
+      notifyNotActiveSeller();
+    } else if (body.amount === 0) {
+      notifyAmount();
+    } else if (body.customerName === '') {
+      notifyCustomer();
+    } else if (id) {
+      //edit
+      try {
         api.updateInvoice(id, body);
-        await delay(600); //update 'put' method need more time for execution, after that we refresh data
-        invoicesStore.fetchInvoices();
-        parentStore.addSelectedRow('');
-        navigate('/invoices');
-      } else {
-        notify();
+      } catch (error) {
+        console.log(error);
       }
+      await delay(700); //update 'put' method need more time for execution, after that we refresh data
+      invoicesStore.fetchInvoices();
+      parentStore.addSelectedRow('');
+      navigate('/invoices');
     } else {
-      if (!sellersStore.checkSellerIsActive(seller)) {
-        notifyNotActiveSeller();
-      } else if (body.amount === 0) {
-        notifyAmount();
-      } else {
+      //create
+      try {
+        console.log('SellerId->>>>', body.sellerId);
         api.createInvoice(body);
-        await delay(600); //create 'post' method need more time for execution, after that we refresh data
-        invoicesStore.fetchInvoices();
-        parentStore.addSelectedRow('');
-        invoicesStore.toggleModal();
+      } catch (error) {
+        console.log(error);
       }
+      await delay(700); //create 'post' method need more time for execution, after that we refresh data
+      invoicesStore.fetchInvoices();
+      parentStore.addSelectedRow('');
+      invoicesStore.toggleModal();
     }
   };
   const discardForm = () => {
     if (id) {
+      parentStore.addSelectedRow('');
       navigate('/invoices');
     } else {
+      parentStore.addSelectedRow('');
       invoicesStore.toggleModal();
     }
   };
 
   const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-  const notify = () =>
-    toast.custom((t) => (
-      <Notification onClick={() => toast.dismiss(t.id)} text="Amount can't be 0 or empty!" />
-    ));
+
   const notifyNotActiveSeller = () =>
     toast.custom((t) => (
       <Notification onClick={() => toast.dismiss(t.id)} text="Seller is not active!" />
@@ -129,6 +127,10 @@ const Modal = (props: ModalProps) => {
   const notifyAmount = () =>
     toast.custom((t) => (
       <Notification onClick={() => toast.dismiss(t.id)} text="Amount must be greater than 0 !" />
+    ));
+  const notifyCustomer = () =>
+    toast.custom((t) => (
+      <Notification onClick={() => toast.dismiss(t.id)} text="Customer is not selected!" />
     ));
   /**<Input
                 type="text"
@@ -143,7 +145,7 @@ const Modal = (props: ModalProps) => {
     <MainContainer>
       <Container>
         <HeaderContainer>
-          <Header>Edit an {props.type}</Header>
+          <Header>{props.headerText}</Header>
           <IconConatiner onClick={discardForm}>
             <Icon icon="delete" />
           </IconConatiner>
@@ -152,7 +154,12 @@ const Modal = (props: ModalProps) => {
           <OptionsContainer>
             <Option>
               <Label>Seller</Label>
-              <Select value={seller} onChange={(e) => setSeller(e.target.value)}>
+              <Select
+                value={seller}
+                onChange={(e) => {
+                  setSeller(e.target.value);
+                  setSellerId((sellersStore.findSeller(e.target.value)! as Seller).id);
+                }}>
                 <option value="">Choose seller</option>
                 {sellersStore.sellers.map((seller: Seller, key) => {
                   return (
@@ -165,7 +172,12 @@ const Modal = (props: ModalProps) => {
             </Option>
             <Option>
               <Label>Customer</Label>
-              <Select value={customer} onChange={(e) => setCustomer(e.target.value)}>
+              <Select
+                value={customer}
+                onChange={(e) => {
+                  setCustomer(e.target.value);
+                  setCustomerId((customersStore.findCustomer(e.target.value)! as Customer).id);
+                }}>
                 <option value="">Choose customer</option>
                 {customersStore.customers.map((customer: Customer, key) => {
                   return (
@@ -195,7 +207,9 @@ const Modal = (props: ModalProps) => {
                 required
                 min={1}
                 type="number"
-                onChange={(e) => setAmount(parseInt(e.target.value))}
+                onChange={(e) =>
+                  !isNaN(parseInt(e.target.value)) && setAmount(parseInt(e.target.value))
+                }
                 value={amount}
               />
             </Option>

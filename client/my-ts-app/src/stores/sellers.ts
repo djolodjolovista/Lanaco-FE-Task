@@ -8,11 +8,12 @@ export interface Seller {
   companyName: string;
   hqAdress: string;
   isActive: boolean;
+  id: string;
 }
 
 class Sellers {
   sellers = [];
-  seller: Seller = { companyName: '', hqAdress: '', isActive: false };
+  seller: Seller = { companyName: '', hqAdress: '', isActive: false, id: '' };
   showModal = false;
   constructor() {
     makeAutoObservable(this, {}, { autoBind: true });
@@ -45,6 +46,10 @@ class Sellers {
 
   checkSellerIsActive(name: string) {
     return this.sellers.find((seller: Seller) => seller.companyName === name && seller.isActive);
+  }
+
+  findSeller(name: string) {
+    return this.sellers.find((seller: Seller) => seller.companyName === name);
   }
 }
 

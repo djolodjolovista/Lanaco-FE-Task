@@ -1,8 +1,7 @@
 import { observer } from 'mobx-react';
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import PageHeader from '../components/PageHeader';
-import TableBody from '../components/table/TableBody';
 import TableHeader from '../components/table/TableHeader';
 import sellersStore from '../stores/sellers';
 import parentStore from '../stores/parent';
@@ -14,7 +13,10 @@ import TableBodySellers from '../components/table/TableBodySellers';
 
 const Sellers = () => {
   const header = ['Name', 'Adress', 'Active'];
-  parentStore.changeActivePage(Page.sellers);
+
+  useEffect(() => {
+    parentStore.changeActivePage(Page.sellers);
+  }, []);
 
   return (
     <>
@@ -25,15 +27,11 @@ const Sellers = () => {
           {parentStore.loading ? (
             <Spinner />
           ) : (
-            <TableBodySellers
-              row={parentStore.selectedRow}
-              type="SELLERS"
-              elements={sellersStore.sellers}
-            />
+            <TableBodySellers row={parentStore.selectedRow} elements={sellersStore.sellers} />
           )}
         </Container>
       </MainContainer>
-      {sellersStore.showModal && <SellersModal type="seller" />}
+      {sellersStore.showModal && <SellersModal headerText="Create an seller" />}
       <Outlet />
     </>
   );

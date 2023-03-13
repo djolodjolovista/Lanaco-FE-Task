@@ -9,11 +9,12 @@ export interface Customer {
   surname: string;
   adress: string;
   age: number;
+  id: string;
 }
 
 class Customers {
   customers = [];
-  customer: Customer = { name: '', surname: '', adress: '', age: 0 };
+  customer: Customer = { name: '', surname: '', adress: '', age: 0, id: '' };
   showModal = false;
   constructor() {
     makeAutoObservable(this, {}, { autoBind: true });
@@ -41,6 +42,12 @@ class Customers {
 
   toggleModal() {
     this.showModal = !this.showModal;
+  }
+
+  findCustomer(name: string) {
+    return this.customers.find(
+      (customer: Customer) => customer.name + ` ` + customer.surname === name
+    );
   }
 }
 

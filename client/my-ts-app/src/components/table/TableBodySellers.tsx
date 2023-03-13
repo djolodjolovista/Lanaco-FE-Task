@@ -1,34 +1,22 @@
 import { observer } from 'mobx-react';
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import parentStore from '../../stores/parent';
 import Pagination from '../../components/Pagination';
-import sellersStore from '../../stores/sellers';
+import { Seller } from '../../stores/sellers';
 
 interface TableBodyProps {
-  elements: any[];
-  type: string;
+  elements: Seller[];
   row: string;
 }
 
-interface TableBodySellers {
-  companyName: string;
-  hqAdress: string;
-  isActive: boolean;
-}
-
 const TableBodySellers = (props: TableBodyProps) => {
-  const navigate = useNavigate();
-  const [elements, setElements] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [elementsPerPage] = useState(4);
-  useEffect(() => {
-    setElements(sellersStore.sellers);
-  }, []);
+
   const indexOfLastElement = currentPage * elementsPerPage;
   const indexOfFirstElement = indexOfLastElement - elementsPerPage;
-  const currentElements = elements.slice(indexOfFirstElement, indexOfLastElement);
+  const currentElements = props.elements.slice(indexOfFirstElement, indexOfLastElement);
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
@@ -36,30 +24,25 @@ const TableBodySellers = (props: TableBodyProps) => {
     <TableContainer>
       <Table>
         <tbody>
-          {currentElements.map(
-            (
-              item: { id: string; companyName: string; hqAdress: string; isActive: boolean },
-              key
-            ) => {
-              return (
-                <TableRow
-                  selected={props.row === item.id}
-                  id={item.id}
-                  onClick={() => parentStore.addSelectedRow(item.id)}
-                  key={key}>
-                  <TableCell>{item.companyName}</TableCell>
-                  <TableCell>{item.hqAdress}</TableCell>
-                  <TableCell>{item.isActive ? 'YES' : 'NO'}</TableCell>
-                </TableRow>
-              );
-            }
-          )}
+          {currentElements.map((item, key) => {
+            return (
+              <TableRow
+                selected={props.row === item.id}
+                id={item.id}
+                onClick={() => parentStore.addSelectedRow(item.id)}
+                key={key}>
+                <TableCell>{item.companyName}</TableCell>
+                <TableCell>{item.hqAdress}</TableCell>
+                <TableCell>{item.isActive ? 'YES' : 'NO'}</TableCell>
+              </TableRow>
+            );
+          })}
         </tbody>
       </Table>
       <Pagination
         currentPage={currentPage}
         elementsPerPage={elementsPerPage}
-        totalElements={elements.length}
+        totalElements={props.elements.length}
         paginate={paginate}
       />
     </TableContainer>

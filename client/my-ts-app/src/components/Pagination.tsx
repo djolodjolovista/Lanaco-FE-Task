@@ -1,22 +1,24 @@
 import React from 'react';
 import styled from 'styled-components';
 
-// eslint-disable-next-line react/prop-types
-const AppPagination = ({ elementsPerPage, totalElements, paginate, currentPage }) => {
+interface PaginationProps {
+  elementsPerPage: number;
+  totalElements: number;
+  paginate: (pageNumber: number) => void;
+  currentPage: number;
+}
+
+const AppPagination = ({
+  elementsPerPage,
+  totalElements,
+  paginate,
+  currentPage
+}: PaginationProps) => {
   const pageNumbers = [];
 
   for (let i = 1; i <= Math.ceil(totalElements / elementsPerPage); i++) {
     pageNumbers.push(i);
   }
-  /** onClick={() => {
-            paginate(number);
-            setClicked(true);
-          }}*/
-  /**{pageNumbers.map((number) => (
-        <Number key={number} clicked={currentPage === number} href="#">
-          {number}
-        </Number>
-      ))} */
 
   return (
     <MainContainer>
@@ -51,7 +53,6 @@ const MainContainer = styled.div`
 const TotalPages = styled.span`
   margin-left: 10px;
   text-decoration: none;
-  ${(props) => (props.clicked ? `color: blue;` : `color: black;`)}
   border: 1.2px solid black;
   border-radius: 5px;
   padding: 1px 10px;

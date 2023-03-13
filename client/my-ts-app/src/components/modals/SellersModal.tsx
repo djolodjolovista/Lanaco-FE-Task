@@ -3,26 +3,17 @@ import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import Icon from '../../icons/Icon';
 import Button from '../Button';
-import invoicesStore from '../../stores/invoices';
-import InvoiceFormModal from './InvoiceFormModal';
 import { observer } from 'mobx-react';
 import moment from 'moment';
 import { api } from '../../api/ApiRequests';
-import { Invoice } from '../../stores/invoices';
 import parentStore from '../../stores/parent';
-import type { DatePickerProps } from 'antd';
-//import { DatePicker, Space } from 'antd';
-import DatePicker from '../DatePicker';
 import sellersStore, { Seller } from '../../stores/sellers';
-import customersStore from '../../stores/customers';
 import { toast, Toaster } from 'react-hot-toast';
 import Notification from '../Notification';
 moment.suppressDeprecationWarnings = true;
 
 interface ModalProps {
-  type: string;
-  //options: { text: string; onClick: (e: React.ChangeEvent) => void }[];
-  options?: { text: string }[];
+  headerText: string;
 }
 
 const Modal = (props: ModalProps) => {
@@ -32,16 +23,21 @@ const Modal = (props: ModalProps) => {
 
   const { id } = useParams();
   const navigate = useNavigate();
-  console.log('ID->>>>', id);
 
   const fetchData = async () => {
     let data: Seller = {
       companyName: '',
       hqAdress: '',
-      isActive: false
+      isActive: false,
+      id: ''
     };
     if (id) {
-      data = (await api.getSeller(id)).data;
+      try {
+        data = (await api.getSeller(id))?.data;
+      } catch (error) {
+        console.log(error);
+        navigate('/sellers');
+      }
       setCompanyName(data.companyName);
       setAdress(data.hqAdress);
       setIsActive(data.isActive);
@@ -52,32 +48,34 @@ const Modal = (props: ModalProps) => {
     }
   };
   useEffect(() => {
-    //id && invoicesStore.getInvoice(id);
     fetchData();
   }, []);
 
-  //if (props.type === 'INVOICE') {
-  //setData(invoicesStore.invoice);
-  // }
   const saveForm = async () => {
     const body = {
       companyName: companyName,
       hqAdress: adress,
       isActive: isActive
     };
-    if (id) {
-      if (body) {
+    if (body.companyName === '' || body.hqAdress === '') {
+      notify();
+    } else if (id) {
+      try {
         api.updateSeller(id, body);
-        await delay(700); //update 'put' method need more time for execution, after that we refresh data
-        sellersStore.fetchSellers();
-        parentStore.addSelectedRow('');
-        navigate('/sellers');
-      } else {
-        notify();
+      } catch (error) {
+        console.log(error);
       }
+      await delay(700); //update 'put' method need more time for execution, after that we refresh data
+      sellersStore.fetchSellers();
+      parentStore.addSelectedRow('');
+      navigate('/sellers');
     } else {
-      api.createSeller(body);
-      await delay(600); //create 'post' method need more time for execution, after that we refresh data
+      try {
+        api.createSeller(body);
+      } catch (error) {
+        console.log(error);
+      }
+      await delay(700); //create 'post' method need more time for execution, after that we refresh data
       sellersStore.fetchSellers();
       parentStore.addSelectedRow('');
       sellersStore.toggleModal();
@@ -85,8 +83,10 @@ const Modal = (props: ModalProps) => {
   };
   const discardForm = () => {
     if (id) {
+      parentStore.addSelectedRow('');
       navigate('/sellers');
     } else {
+      parentStore.addSelectedRow('');
       sellersStore.toggleModal();
     }
   };
@@ -96,20 +96,12 @@ const Modal = (props: ModalProps) => {
     toast.custom((t) => (
       <Notification onClick={() => toast.dismiss(t.id)} text="All fields are required!" />
     ));
-  /**<Input
-                type="text"
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSeller(e.target.value)}
-                value={seller}
-              />
-              <Input
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCustomer(e.target.value)}
-                value={customer}
-              /> */
+
   return (
     <MainContainer>
       <Container>
         <HeaderContainer>
-          <Header>Edit an {props.type}</Header>
+          <Header>{props.headerText}</Header>
           <IconConatiner onClick={discardForm}>
             <Icon icon="delete" />
           </IconConatiner>
@@ -130,24 +122,30 @@ const Modal = (props: ModalProps) => {
             </Option>
             <Option>
               <Label>Active</Label>
-              <Label htmlFor="yes">Yes</Label>
-              <Input
-                type="radio"
-                name="active"
-                value="YES"
-                key="yes"
-                checked={isActive}
-                onChange={() => setIsActive(true)}
-              />
-              <Label htmlFor="no">No</Label>
-              <Input
-                type="radio"
-                name="active"
-                value="NO"
-                key="no"
-                checked={!isActive}
-                onChange={() => setIsActive(false)}
-              />
+              <RadioButtonsContainer>
+                <RadioButtonContainer>
+                  <label htmlFor="yes">Yes</label>
+                  <Input
+                    type="radio"
+                    name="active"
+                    value="YES"
+                    key="yes"
+                    checked={isActive}
+                    onChange={() => setIsActive(true)}
+                  />
+                </RadioButtonContainer>
+                <RadioButtonContainer>
+                  <label htmlFor="no">No</label>
+                  <Input
+                    type="radio"
+                    name="active"
+                    value="NO"
+                    key="no"
+                    checked={!isActive}
+                    onChange={() => setIsActive(false)}
+                  />
+                </RadioButtonContainer>
+              </RadioButtonsContainer>
             </Option>
           </OptionsContainer>
         </OptionsContainer>
@@ -227,18 +225,24 @@ const Input = styled.input`
   border-radius: 5px;
 `;
 
-const Select = styled.select`
-  margin-top: 3px;
-  border: 2px solid gray;
-  border-radius: 5px;
-  width: 100%;
-`;
-
 const ButtonsContainer = styled.div`
   display: flex;
   flex-direction: row;
   gap: 20px;
   margin: 15px 5px;
+`;
+
+const RadioButtonsContainer = styled.div`
+  flex-direction: column;
+  margin-top: 10px;
+`;
+
+const RadioButtonContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  margin-left: 20px;
+  margin-bottom: 5px;
 `;
 
 const IconConatiner = styled.div`
@@ -252,10 +256,3 @@ const IconConatiner = styled.div`
 `;
 
 const ModalButton = styled(Button)``;
-
-const InputDate = styled(DatePicker)`
-  width: 100%;
-  &:hover {
-    border: 1px solid black;
-  }
-`;

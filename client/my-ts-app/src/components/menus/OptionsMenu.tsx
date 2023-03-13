@@ -46,7 +46,7 @@ const OptionsMenu = () => {
         sellersStore.fetchSellers();
         setShowDeleteModal(false);
       } else {
-        notify();
+        notifySeller();
       }
     } else if (parentStore.activePage === Page.customers) {
       if (!invoicesStore.checkCustomerOnInvoices()) {
@@ -56,7 +56,7 @@ const OptionsMenu = () => {
         customersStore.fetchCustomers();
         setShowDeleteModal(false);
       } else {
-        notifyForCustomer();
+        notifyCustomer();
       }
     }
   };
@@ -71,12 +71,12 @@ const OptionsMenu = () => {
     }
   };
 
-  const notify = () =>
+  const notifySeller = () =>
     toast.custom((t) => (
       <Notification onClick={() => toast.dismiss(t.id)} text="The seller exists on the invoice!" />
     ));
 
-  const notifyForCustomer = () =>
+  const notifyCustomer = () =>
     toast.custom((t) => (
       <Notification
         onClick={() => toast.dismiss(t.id)}
@@ -84,7 +84,6 @@ const OptionsMenu = () => {
       />
     ));
 
-  console.log('Location->>>>>', location.pathname);
   return (
     <>
       <MainContainer>
