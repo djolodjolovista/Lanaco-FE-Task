@@ -8,7 +8,7 @@
 
 **Client:** React, TypeScript, MobX - state management
 
-**Server:** mockapi-io
+**Server:** [mockapi-io](https://mockapi.io/projects/641094f5b21ab59f3382f285)
 
 **Ostale biblioteke:**
 
