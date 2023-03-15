@@ -22,12 +22,12 @@
 
 
 ## Environment Variables
-Da bi pokrenuli projekat morate dodati environment variables u vas *.env* fajl. Uprojektu se nalazi primjer fajla *.env.example*. Uposto sam koristio free verziju mockapi-io (dozvoljavaju samo dvije tabele), tako da sam napravio dva account-a jer za zadatak trebaju 3 tabele: invoices, sellers i customers. Zbog toga imamo dva API BASE URL-a :
+Da bi pokrenuli projekat morate dodati environment variables u vas *.env* fajl. Uprojektu se nalazi primjer fajla *.env.example*. Uposto sam koristio free verziju mockapi-io (dozvoljavaju samo dvije tabele), tako da sam napravio dva account-a jer za zadatak trebaju 3 tabele: invoices, sellers i customers. Zbog toga imamo dva API BASE URL-a koje treba dodati u *.env* fajl:
 
-REACT_APP_BASE_URL_1 za invoices i sellers:
+REACT_APP_BASE_URL_1 (za invoices i sellers):
 `https://6410933aff89c2e2d4e2b35f.mockapi.io/lanaco`
 
-REACT_APP_BASE_URL_2 za customers:
+REACT_APP_BASE_URL_2 (za customers):
 `https://641094f5b21ab59f3382f284.mockapi.io/lanaco`
 
 **Kredencijali od account-a:**
