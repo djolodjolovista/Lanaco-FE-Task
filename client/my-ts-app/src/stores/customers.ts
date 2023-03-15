@@ -47,6 +47,40 @@ class Customers {
       (customer: Customer) => customer.name + ` ` + customer.surname === name
     );
   }
+
+  async deleteCustomer() {
+    try {
+      await api.deleteCustomer(parentStore.selectedRow);
+    } catch (error) {
+      console.log(error);
+    }
+
+    parentStore.addSelectedRow('');
+    await this.fetchCustomers();
+  }
+
+  async updateCustomer(id: string, body: any) {
+    try {
+      await api.updateCustomer(id, body);
+    } catch (error) {
+      console.log(error);
+    }
+
+    await this.fetchCustomers();
+    parentStore.addSelectedRow('');
+  }
+
+  async createCustomer(body: any) {
+    try {
+      await api.createCustomer(body);
+    } catch (error) {
+      console.log(error);
+    }
+
+    await this.fetchCustomers();
+    parentStore.addSelectedRow('');
+    this.toggleModal();
+  }
 }
 
 const customersStore = new Customers();

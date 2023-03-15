@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { api } from '../../api/ApiRequests';
 import Icon from '../../icons/Icon';
 import customersStore from '../../stores/customers';
 import invoicesStore from '../../stores/invoices';
@@ -18,8 +17,6 @@ const OptionsMenu = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
   const createRow = () => {
     if (parentStore.activePage === Page.invoices) {
       invoicesStore.toggleModal();
@@ -32,33 +29,56 @@ const OptionsMenu = () => {
 
   const deleteRow = async () => {
     if (parentStore.activePage === Page.invoices) {
-      api.deleteInvoice(parentStore.selectedRow);
-      await delay(700);
-      parentStore.addSelectedRow('');
-      invoicesStore.fetchInvoices();
+      invoicesStore.deleteInvoice();
       setShowDeleteModal(false);
     } else if (parentStore.activePage === Page.sellers) {
       if (!invoicesStore.checkSellersOnInvoices()) {
-        api.deleteSeller(parentStore.selectedRow);
-        await delay(700);
-        parentStore.addSelectedRow('');
-        sellersStore.fetchSellers();
+        sellersStore.deleteSeller();
         setShowDeleteModal(false);
       } else {
         notifySeller();
       }
     } else if (parentStore.activePage === Page.customers) {
       if (!invoicesStore.checkCustomerOnInvoices()) {
-        api.deleteCustomer(parentStore.selectedRow);
-        await delay(700);
-        parentStore.addSelectedRow('');
-        customersStore.fetchCustomers();
+        customersStore.deleteCustomer();
         setShowDeleteModal(false);
       } else {
         notifyCustomer();
       }
     }
   };
+
+  /*const deleteRow = async () => {
+    if (parentStore.activePage === Page.invoices) {
+      parentStore.toggleLoading(true);
+      await api.deleteInvoice(parentStore.selectedRow);
+      //await delay(700);
+      parentStore.toggleLoading(false);
+      parentStore.addSelectedRow('');
+      await invoicesStore.fetchInvoices();
+      setShowDeleteModal(false);
+    } else if (parentStore.activePage === Page.sellers) {
+      if (!invoicesStore.checkSellersOnInvoices()) {
+        await api.deleteSeller(parentStore.selectedRow);
+        //await delay(700);
+        parentStore.addSelectedRow('');
+        await sellersStore.fetchSellers();
+        setShowDeleteModal(false);
+      } else {
+        notifySeller();
+      }
+    } else if (parentStore.activePage === Page.customers) {
+      if (!invoicesStore.checkCustomerOnInvoices()) {
+        await api.deleteCustomer(parentStore.selectedRow);
+        //await delay(700);
+        parentStore.addSelectedRow('');
+        await customersStore.fetchCustomers();
+        setShowDeleteModal(false);
+      } else {
+        notifyCustomer();
+      }
+    }
+  };*/
 
   const editRow = () => {
     if (parentStore.activePage === Page.invoices) {

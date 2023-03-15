@@ -95,6 +95,7 @@ const TableRow = styled.tr<{ selected: boolean }>`
 
 const RowLink = styled(Link)`
   text-decoration: none;
+  color: black;
   &:hover {
     color: blue;
     text-decoration: underline;

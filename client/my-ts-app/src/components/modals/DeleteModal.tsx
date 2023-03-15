@@ -1,6 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
+import parentStore from '../../stores/parent';
 import Button from '../Button';
+import Spinner from '../Spinner';
 
 interface DeleteModalProps {
   yes: () => void;
@@ -12,11 +14,17 @@ const DeleteModal = (props: DeleteModalProps) => {
   return (
     <MainContainer>
       <Container>
-        <Label>{props.label}</Label>
-        <ButtonContainer>
-          <Button color="255, 77, 77" text="Yes" onClick={props.yes} />
-          <Button color="179, 179, 179" text="No" onClick={props.no} />
-        </ButtonContainer>
+        {parentStore.loading ? (
+          <DeleteSpinner cssOveride={{ display: 'inline', position: 'initial' }} size={40} />
+        ) : (
+          <>
+            <Label>{props.label}</Label>
+            <ButtonContainer>
+              <Button color="255, 77, 77" text="Yes" onClick={props.yes} />
+              <Button color="179, 179, 179" text="No" onClick={props.no} />
+            </ButtonContainer>
+          </>
+        )}
       </Container>
     </MainContainer>
   );
@@ -64,4 +72,9 @@ const ButtonContainer = styled.div`
   margin-top: 10px;
   margin-bottom: 15px;
   width: 100%;
+`;
+
+const DeleteSpinner = styled(Spinner)`
+  display: inline !important;
+  position: initial !important;
 `;

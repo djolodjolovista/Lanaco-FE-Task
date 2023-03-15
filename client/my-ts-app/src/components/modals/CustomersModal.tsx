@@ -62,17 +62,10 @@ const Modal = (props: ModalProps) => {
     if (body.name === '' || body.surname === '' || body.adress === '' || body.age === 0) {
       notify();
     } else if (id) {
-      api.updateCustomer(id, body);
-      await delay(700);
-      customersStore.fetchCustomers();
-      parentStore.addSelectedRow('');
+      customersStore.updateCustomer(id, body);
       navigate('/customers');
     } else {
-      api.createCustomer(body);
-      await delay(700);
-      customersStore.fetchCustomers();
-      parentStore.addSelectedRow('');
-      customersStore.toggleModal();
+      customersStore.createCustomer(body);
     }
   };
   const discardForm = () => {
@@ -85,7 +78,6 @@ const Modal = (props: ModalProps) => {
     }
   };
 
-  const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
   const notify = () =>
     toast.custom((t) => (
       <Notification onClick={() => toast.dismiss(t.id)} text="All fileds are required! (Age > 0)" />

@@ -49,6 +49,35 @@ class Sellers {
   findSeller(name: string) {
     return this.sellers.find((seller: Seller) => seller.companyName === name);
   }
+
+  async deleteSeller() {
+    await api.deleteSeller(parentStore.selectedRow);
+    parentStore.addSelectedRow('');
+    await this.fetchSellers();
+  }
+
+  async updateSeller(id: string, body: any) {
+    try {
+      await api.updateSeller(id, body);
+    } catch (error) {
+      console.log(error);
+    }
+
+    await this.fetchSellers();
+    parentStore.addSelectedRow('');
+  }
+
+  async createSeller(body: any) {
+    try {
+      await api.createSeller(body);
+    } catch (error) {
+      console.log(error);
+    }
+
+    await this.fetchSellers();
+    parentStore.addSelectedRow('');
+    this.toggleModal();
+  }
 }
 
 const sellersStore = new Sellers();

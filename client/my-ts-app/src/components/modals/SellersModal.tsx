@@ -60,25 +60,10 @@ const Modal = (props: ModalProps) => {
     if (body.companyName === '' || body.hqAdress === '') {
       notify();
     } else if (id) {
-      try {
-        api.updateSeller(id, body);
-      } catch (error) {
-        console.log(error);
-      }
-      await delay(700);
-      sellersStore.fetchSellers();
-      parentStore.addSelectedRow('');
+      sellersStore.updateSeller(id, body);
       navigate('/sellers');
     } else {
-      try {
-        api.createSeller(body);
-      } catch (error) {
-        console.log(error);
-      }
-      await delay(700);
-      sellersStore.fetchSellers();
-      parentStore.addSelectedRow('');
-      sellersStore.toggleModal();
+      sellersStore.createSeller(body);
     }
   };
   const discardForm = () => {
@@ -91,7 +76,6 @@ const Modal = (props: ModalProps) => {
     }
   };
 
-  const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
   const notify = () =>
     toast.custom((t) => (
       <Notification onClick={() => toast.dismiss(t.id)} text="All fields are required!" />

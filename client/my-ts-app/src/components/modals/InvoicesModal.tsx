@@ -82,26 +82,11 @@ const Modal = (props: ModalProps) => {
       notifyCustomer();
     } else if (id) {
       //edit
-      try {
-        api.updateInvoice(id, body);
-      } catch (error) {
-        console.log(error);
-      }
-      await delay(700);
-      invoicesStore.fetchInvoices();
-      parentStore.addSelectedRow('');
+      invoicesStore.updateInvoice(id, body);
       navigate('/invoices');
     } else {
       //create
-      try {
-        api.createInvoice(body);
-      } catch (error) {
-        console.log(error);
-      }
-      await delay(700);
-      invoicesStore.fetchInvoices();
-      parentStore.addSelectedRow('');
-      invoicesStore.toggleModal();
+      invoicesStore.createInvoice(body);
     }
   };
   const discardForm = () => {
@@ -113,8 +98,6 @@ const Modal = (props: ModalProps) => {
       invoicesStore.toggleModal();
     }
   };
-
-  const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
   const notifyNotActiveSeller = () =>
     toast.custom((t) => (

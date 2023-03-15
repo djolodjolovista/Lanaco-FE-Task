@@ -2,10 +2,15 @@ import React from 'react';
 import HashLoader from 'react-spinners/HashLoader';
 import styled from 'styled-components';
 
-const Spinner = () => {
+interface SpinnerProps {
+  size?: number;
+  cssOveride?: React.CSSProperties;
+}
+
+const Spinner = ({ size = 80, cssOveride = {} }: SpinnerProps) => {
   return (
     <Container>
-      <HashLoader color="blue" loading={true} size={80} />
+      <HashLoader cssOverride={cssOveride} color="blue" loading={true} size={size} />
     </Container>
   );
 };

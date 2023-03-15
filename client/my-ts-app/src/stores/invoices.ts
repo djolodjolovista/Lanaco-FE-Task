@@ -66,6 +66,41 @@ class Invoices {
       (invoice) => (invoice as Invoice).customerId === parentStore.selectedRow
     );
   }
+
+  async deleteInvoice() {
+    parentStore.toggleLoading(true);
+    try {
+      await api.deleteInvoice(parentStore.selectedRow);
+    } catch (error) {
+      console.log(error);
+    }
+
+    parentStore.toggleLoading(false);
+    parentStore.addSelectedRow('');
+    await this.fetchInvoices();
+  }
+
+  async updateInvoice(id: string, body: any) {
+    try {
+      await api.updateInvoice(id, body);
+    } catch (error) {
+      console.log(error);
+    }
+    await this.fetchInvoices();
+    parentStore.addSelectedRow('');
+  }
+
+  async createInvoice(body: any) {
+    try {
+      await api.createInvoice(body);
+    } catch (error) {
+      console.log(error);
+    }
+
+    await this.fetchInvoices();
+    parentStore.addSelectedRow('');
+    this.toggleModal();
+  }
 }
 const invoicesStore = new Invoices();
 export default invoicesStore;
