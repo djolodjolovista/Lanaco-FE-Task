@@ -48,38 +48,6 @@ const OptionsMenu = () => {
     }
   };
 
-  /*const deleteRow = async () => {
-    if (parentStore.activePage === Page.invoices) {
-      parentStore.toggleLoading(true);
-      await api.deleteInvoice(parentStore.selectedRow);
-      //await delay(700);
-      parentStore.toggleLoading(false);
-      parentStore.addSelectedRow('');
-      await invoicesStore.fetchInvoices();
-      setShowDeleteModal(false);
-    } else if (parentStore.activePage === Page.sellers) {
-      if (!invoicesStore.checkSellersOnInvoices()) {
-        await api.deleteSeller(parentStore.selectedRow);
-        //await delay(700);
-        parentStore.addSelectedRow('');
-        await sellersStore.fetchSellers();
-        setShowDeleteModal(false);
-      } else {
-        notifySeller();
-      }
-    } else if (parentStore.activePage === Page.customers) {
-      if (!invoicesStore.checkCustomerOnInvoices()) {
-        await api.deleteCustomer(parentStore.selectedRow);
-        //await delay(700);
-        parentStore.addSelectedRow('');
-        await customersStore.fetchCustomers();
-        setShowDeleteModal(false);
-      } else {
-        notifyCustomer();
-      }
-    }
-  };*/
-
   const editRow = () => {
     if (parentStore.activePage === Page.invoices) {
       navigate(`${location.pathname}/${parentStore.selectedRow}`);
