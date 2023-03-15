@@ -178,8 +178,9 @@ const Modal = (props: ModalProps) => {
                 required
                 min={1}
                 type="number"
+                step="0.5"
                 onChange={(e) =>
-                  !isNaN(parseInt(e.target.value)) && setAmount(parseInt(e.target.value))
+                  !isNaN(parseInt(e.target.value)) && setAmount(parseFloat(e.target.value))
                 }
                 value={amount}
               />
