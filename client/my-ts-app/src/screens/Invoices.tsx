@@ -26,7 +26,7 @@ const Invoices = () => {
           {parentStore.loading ? (
             <Spinner />
           ) : (
-            <TableBodyInvoices row={parentStore.selectedRow} elements={invoicesStore.invoices} />
+            <TableBodyInvoices row={parentStore.selectedRows} elements={invoicesStore.invoices} />
           )}
         </Container>
       </MainContainer>

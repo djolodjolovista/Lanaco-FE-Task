@@ -7,7 +7,7 @@ import { Seller } from '../../stores/sellers';
 
 interface TableBodyProps {
   elements: Seller[];
-  row: string;
+  row: string[];
 }
 
 const TableBodySellers = (props: TableBodyProps) => {
@@ -27,7 +27,7 @@ const TableBodySellers = (props: TableBodyProps) => {
           {currentElements.map((item, key) => {
             return (
               <TableRow
-                selected={props.row === item.id}
+                selected={props.row.some((row) => row === item.id)}
                 id={item.id}
                 onClick={() => parentStore.addSelectedRow(item.id)}
                 key={key}>

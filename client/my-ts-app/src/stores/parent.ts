@@ -10,7 +10,7 @@ export enum Page {
 class Parent {
   activePage: Page = Page.main;
   showModal = false;
-  selectedRow = '';
+  selectedRows: string[] = [];
   loading = false;
   constructor() {
     makeAutoObservable(this, {}, { autoBind: true });
@@ -27,7 +27,7 @@ class Parent {
   }
 
   addSelectedRow(id: string) {
-    this.selectedRow = id;
+    this.selectedRows.push(id);
   }
 
   toggleModal() {
@@ -38,8 +38,16 @@ class Parent {
     this.loading = state;
   }
 
-  get enabledMenuOptions() {
-    return this.selectedRow !== '';
+  resetSelectedRows() {
+    this.selectedRows = [];
+  }
+
+  get enabledMenuOptionDelete() {
+    return this.selectedRows.length !== 0;
+  }
+
+  get enableMenuOptionEdit() {
+    return this.selectedRows.length === 1;
   }
 }
 

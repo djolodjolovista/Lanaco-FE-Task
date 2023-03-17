@@ -14,6 +14,7 @@ import sellersStore, { Seller } from '../../stores/sellers';
 import customersStore, { Customer } from '../../stores/customers';
 import { toast, Toaster } from 'react-hot-toast';
 import Notification from '../Notification';
+import Spinner from '../Spinner';
 moment.suppressDeprecationWarnings = true;
 
 interface ModalProps {
@@ -65,7 +66,7 @@ const Modal = (props: ModalProps) => {
     fetchData();
   }, []);
 
-  const saveForm = async () => {
+  const saveForm = () => {
     const body = {
       sellerName: seller,
       customerName: customer,
@@ -91,10 +92,10 @@ const Modal = (props: ModalProps) => {
   };
   const discardForm = () => {
     if (id) {
-      parentStore.addSelectedRow('');
+      parentStore.resetSelectedRows();
       navigate('/invoices');
     } else {
-      parentStore.addSelectedRow('');
+      parentStore.resetSelectedRows();
       invoicesStore.toggleModal();
     }
   };
@@ -188,8 +189,14 @@ const Modal = (props: ModalProps) => {
           </OptionsContainer>
         </OptionsContainer>
         <ButtonsContainer>
-          <ModalButton text="Discard" color="188, 193, 22" onClick={discardForm} />
-          <ModalButton text="Save" color="103, 178, 71" onClick={saveForm} />
+          {parentStore.loading ? (
+            <Spinner cssOveride={{ display: 'inline', position: 'initial' }} size={40} />
+          ) : (
+            <>
+              <ModalButton text="Discard" color="188, 193, 22" onClick={discardForm} />
+              <ModalButton text="Save" color="103, 178, 71" onClick={saveForm} />
+            </>
+          )}
         </ButtonsContainer>
       </Container>
       <Toaster position="top-right" reverseOrder={false} />

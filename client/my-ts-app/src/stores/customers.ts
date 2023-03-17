@@ -49,37 +49,45 @@ class Customers {
   }
 
   async deleteCustomer() {
-    try {
-      await api.deleteCustomer(parentStore.selectedRow);
-    } catch (error) {
-      console.log(error);
+    for (let i = 0; i < parentStore.selectedRows.length; i++) {
+      try {
+        parentStore.toggleLoading(true);
+        await api.deleteCustomer(parentStore.selectedRows[i]);
+      } catch (error) {
+        parentStore.toggleLoading(false);
+        console.log(error);
+      }
     }
-
-    parentStore.addSelectedRow('');
+    parentStore.toggleLoading(false);
+    parentStore.resetSelectedRows();
     await this.fetchCustomers();
   }
 
   async updateCustomer(id: string, body: any) {
     try {
+      parentStore.toggleLoading(true);
       await api.updateCustomer(id, body);
     } catch (error) {
+      parentStore.toggleLoading(false);
       console.log(error);
     }
-
+    parentStore.toggleLoading(false);
     await this.fetchCustomers();
-    parentStore.addSelectedRow('');
+    parentStore.resetSelectedRows();
   }
 
   async createCustomer(body: any) {
     try {
+      parentStore.toggleLoading(true);
       await api.createCustomer(body);
     } catch (error) {
+      parentStore.toggleLoading(false);
       console.log(error);
     }
-
-    await this.fetchCustomers();
-    parentStore.addSelectedRow('');
+    parentStore.toggleLoading(false);
     this.toggleModal();
+    await this.fetchCustomers();
+    parentStore.resetSelectedRows();
   }
 }
 

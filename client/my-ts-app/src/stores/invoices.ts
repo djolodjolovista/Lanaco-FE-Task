@@ -47,59 +47,62 @@ class Invoices {
     return this.invoice;
   }
 
-  get numberOfPages() {
-    return Math.round(this.invoices.length / 4);
-  }
-
   toggleModal() {
     this.showModal = !this.showModal;
   }
 
   checkSellersOnInvoices() {
-    return invoicesStore.invoices.find(
-      (invoice) => (invoice as Invoice).sellerId === parentStore.selectedRow
+    return this.invoices.some((invoice: Invoice) =>
+      parentStore.selectedRows.includes(invoice.sellerId)
     );
   }
 
   checkCustomerOnInvoices() {
-    return invoicesStore.invoices.find(
-      (invoice) => (invoice as Invoice).customerId === parentStore.selectedRow
+    return this.invoices.some((invoice: Invoice) =>
+      parentStore.selectedRows.includes(invoice.customerId)
     );
   }
 
   async deleteInvoice() {
     parentStore.toggleLoading(true);
-    try {
-      await api.deleteInvoice(parentStore.selectedRow);
-    } catch (error) {
-      console.log(error);
+    for (let i = 0; i < parentStore.selectedRows.length; i++) {
+      try {
+        await api.deleteInvoice(parentStore.selectedRows[i]);
+      } catch (error) {
+        console.log(error);
+        parentStore.toggleLoading(false);
+      }
     }
-
-    parentStore.toggleLoading(false);
-    parentStore.addSelectedRow('');
+    parentStore.resetSelectedRows();
     await this.fetchInvoices();
+    parentStore.toggleLoading(false);
   }
 
   async updateInvoice(id: string, body: any) {
     try {
+      parentStore.toggleLoading(true);
       await api.updateInvoice(id, body);
     } catch (error) {
       console.log(error);
+      parentStore.toggleLoading(false);
     }
     await this.fetchInvoices();
-    parentStore.addSelectedRow('');
+    parentStore.resetSelectedRows();
+    parentStore.toggleLoading(false);
   }
 
   async createInvoice(body: any) {
     try {
+      parentStore.toggleLoading(true);
       await api.createInvoice(body);
     } catch (error) {
       console.log(error);
+      parentStore.toggleLoading(false);
     }
-
-    await this.fetchInvoices();
-    parentStore.addSelectedRow('');
     this.toggleModal();
+    await this.fetchInvoices();
+    parentStore.toggleLoading(false);
+    parentStore.resetSelectedRows();
   }
 }
 const invoicesStore = new Invoices();

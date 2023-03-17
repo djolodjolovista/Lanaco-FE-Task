@@ -51,32 +51,43 @@ class Sellers {
   }
 
   async deleteSeller() {
-    await api.deleteSeller(parentStore.selectedRow);
-    parentStore.addSelectedRow('');
+    for (let i = 0; i < parentStore.selectedRows.length; i++) {
+      try {
+        await api.deleteSeller(parentStore.selectedRows[i]);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    parentStore.resetSelectedRows();
     await this.fetchSellers();
   }
 
   async updateSeller(id: string, body: any) {
     try {
+      parentStore.toggleLoading(true);
       await api.updateSeller(id, body);
     } catch (error) {
+      parentStore.toggleLoading(false);
       console.log(error);
     }
-
+    parentStore.toggleLoading(false);
     await this.fetchSellers();
-    parentStore.addSelectedRow('');
+    parentStore.resetSelectedRows();
   }
 
   async createSeller(body: any) {
     try {
+      parentStore.toggleLoading(true);
       await api.createSeller(body);
     } catch (error) {
+      parentStore.toggleLoading(false);
       console.log(error);
     }
-
-    await this.fetchSellers();
-    parentStore.addSelectedRow('');
+    parentStore.toggleLoading(false);
     this.toggleModal();
+    await this.fetchSellers();
+    parentStore.resetSelectedRows();
   }
 }
 

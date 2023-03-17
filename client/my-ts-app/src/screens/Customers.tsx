@@ -26,7 +26,10 @@ const Customers = () => {
           {parentStore.loading ? (
             <Spinner />
           ) : (
-            <TableBodyCustomers row={parentStore.selectedRow} elements={customersStore.customers} />
+            <TableBodyCustomers
+              row={parentStore.selectedRows}
+              elements={customersStore.customers}
+            />
           )}
         </Container>
       </MainContainer>

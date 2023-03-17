@@ -8,7 +8,7 @@ import Pagination from '../../components/Pagination';
 
 interface TableBodyProps {
   elements: Invoice[];
-  row: string;
+  row: string[];
 }
 
 const TableBodyInvoices = (props: TableBodyProps) => {
@@ -28,7 +28,7 @@ const TableBodyInvoices = (props: TableBodyProps) => {
           {currentElements.map((item, key) => {
             return (
               <TableRow
-                selected={props.row === item.id}
+                selected={props.row.some((row) => row === item.id)}
                 id={item.id}
                 key={key}
                 onClick={() => {

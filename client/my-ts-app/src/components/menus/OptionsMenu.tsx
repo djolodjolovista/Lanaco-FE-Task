@@ -27,7 +27,7 @@ const OptionsMenu = () => {
     }
   };
 
-  const deleteRow = async () => {
+  const deleteRow = () => {
     if (parentStore.activePage === Page.invoices) {
       invoicesStore.deleteInvoice();
       setShowDeleteModal(false);
@@ -50,11 +50,11 @@ const OptionsMenu = () => {
 
   const editRow = () => {
     if (parentStore.activePage === Page.invoices) {
-      navigate(`${location.pathname}/${parentStore.selectedRow}`);
+      navigate(`${location.pathname}/${parentStore.selectedRows}`);
     } else if (parentStore.activePage === Page.sellers) {
-      navigate(`${location.pathname}/${parentStore.selectedRow}`);
+      navigate(`${location.pathname}/${parentStore.selectedRows}`);
     } else if (parentStore.activePage === Page.customers) {
-      navigate(`${location.pathname}/${parentStore.selectedRow}`);
+      navigate(`${location.pathname}/${parentStore.selectedRows}`);
     }
   };
 
@@ -78,13 +78,13 @@ const OptionsMenu = () => {
           <Icon icon="add" size="35" />
         </IconConatiner>
         <IconConatiner
-          enabled={parentStore.enabledMenuOptions}
+          enabled={parentStore.enableMenuOptionEdit}
           onClick={editRow}
           background="#ffff0075">
           <Icon icon="edit" size="25" />
         </IconConatiner>
         <IconConatiner
-          enabled={parentStore.enabledMenuOptions}
+          enabled={parentStore.enabledMenuOptionDelete}
           onClick={() => setShowDeleteModal(true)}
           background="#ff000073">
           <Icon icon="delete" size="35" />

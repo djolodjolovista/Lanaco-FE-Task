@@ -14,7 +14,7 @@ const Menu = () => {
       <IconConatiner
         onClick={() => {
           parentStore.changeActivePage(Page.invoices);
-          parentStore.addSelectedRow('');
+          parentStore.resetSelectedRows();
           navigate('/invoices');
         }}
         active={parentStore.currentPage === Page.invoices}>
@@ -24,7 +24,7 @@ const Menu = () => {
       <IconConatiner
         onClick={() => {
           parentStore.changeActivePage(Page.sellers);
-          parentStore.addSelectedRow('');
+          parentStore.resetSelectedRows();
           navigate('/sellers');
         }}
         active={parentStore.currentPage === Page.sellers}>
@@ -34,7 +34,7 @@ const Menu = () => {
       <IconConatiner
         onClick={() => {
           parentStore.changeActivePage(Page.customers);
-          parentStore.addSelectedRow('');
+          parentStore.resetSelectedRows();
           navigate('/customers');
         }}
         active={parentStore.currentPage === Page.customers}>

@@ -9,6 +9,7 @@ import parentStore from '../../stores/parent';
 import customersStore, { Customer } from '../../stores/customers';
 import { toast, Toaster } from 'react-hot-toast';
 import Notification from '../Notification';
+import Spinner from '../Spinner';
 
 interface ModalProps {
   headerText: string;
@@ -70,10 +71,10 @@ const Modal = (props: ModalProps) => {
   };
   const discardForm = () => {
     if (id) {
-      parentStore.addSelectedRow('');
+      parentStore.resetSelectedRows();
       navigate('/customers');
     } else {
-      parentStore.addSelectedRow('');
+      parentStore.resetSelectedRows();
       customersStore.toggleModal();
     }
   };
@@ -111,15 +112,23 @@ const Modal = (props: ModalProps) => {
                 required
                 min={1}
                 type="number"
-                onChange={(e) => setAge(parseInt(e.target.value))}
+                onChange={(e) =>
+                  !isNaN(parseInt(e.target.value)) && setAge(parseInt(e.target.value))
+                }
                 value={age}
               />
             </Option>
           </OptionsContainer>
         </OptionsContainer>
         <ButtonsContainer>
-          <ModalButton text="Discard" color="188, 193, 22" onClick={discardForm} />
-          <ModalButton text="Save" color="103, 178, 71" onClick={saveForm} />
+          {parentStore.loading ? (
+            <Spinner cssOveride={{ display: 'inline', position: 'initial' }} size={40} />
+          ) : (
+            <>
+              <ModalButton text="Discard" color="188, 193, 22" onClick={discardForm} />
+              <ModalButton text="Save" color="103, 178, 71" onClick={saveForm} />
+            </>
+          )}
         </ButtonsContainer>
       </Container>
       <Toaster position="top-right" reverseOrder={false} />

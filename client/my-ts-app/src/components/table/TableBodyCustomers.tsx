@@ -7,7 +7,7 @@ import { Customer } from '../../stores/customers';
 
 interface TableBodyProps {
   elements: Customer[];
-  row: string;
+  row: string[];
 }
 
 const TableBodyCustomers = (props: TableBodyProps) => {
@@ -26,7 +26,7 @@ const TableBodyCustomers = (props: TableBodyProps) => {
           {currentElements.map((item, key) => {
             return (
               <TableRow
-                selected={props.row === item.id}
+                selected={props.row.some((row) => row === item.id)}
                 id={item.id}
                 onClick={() => parentStore.addSelectedRow(item.id)}
                 key={key}>
