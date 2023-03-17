@@ -27,7 +27,7 @@ class Parent {
   }
 
   addSelectedRow(id: string) {
-    this.selectedRows.push(id);
+    !this.selectedRows.includes(id) && this.selectedRows.push(id);
   }
 
   toggleModal() {
